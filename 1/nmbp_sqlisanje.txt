@@ -1,0 +1,22 @@
+nmbp sqlisanje
+
+SELECT description
+INTO moviedescriptions
+FROM movie;
+
+ALTER TABLE moviedescriptions ADD COLUMN moviedescriptionID BIGSERIAL PRIMARY KEY;
+
+ALTER TABLE movie ADD COLUMN moviedescriptionID INTEGER;
+
+ALTER TABLE movie
+ADD CONSTRAINT fk_moviemoviedescriptions
+FOREIGN KEY (moviedescriptionID)
+REFERENCES moviedescriptions (moviedescriptionID);
+
+UPDATE movie
+SET moviedescriptionID = (
+	SELECT moviedescriptionID 
+	FROM moviedescriptions md 
+	WHERE movie.description = md.description);
+
+ALTER TABLE movie DROP COLUMN description;
