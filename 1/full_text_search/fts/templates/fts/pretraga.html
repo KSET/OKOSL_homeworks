@@ -5,9 +5,8 @@
     <title>Full Text Search - pretraga</title>
 </head>
 <body>
-<body>
-<h1>Pretraga</h1>
-<form action="results/" method="post">
+<h1>Pretraga: </h1>
+<form method="post">
     {% csrf_token %}
     {{ form }}
     <input type="submit" value="Submit" />

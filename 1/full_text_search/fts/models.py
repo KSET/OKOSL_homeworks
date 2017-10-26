@@ -8,6 +8,9 @@
 from __future__ import unicode_literals
 
 from django.db import models
+from django.db.models.functions import Concat
+from django.contrib.postgres.search import SearchVector
+
 
 
 class AuthGroup(models.Model):
@@ -121,12 +124,12 @@ class DjangoSession(models.Model):
 
 
 class Movies(models.Model):
-    movieID = models.AutoField(primary_key=True, db_column='movieid')
+    movieID = models.BigAutoField(primary_key=True, db_column='movie_id')
     title = models.CharField(max_length=255, blank=True, null=True)
     categories = models.CharField(max_length=255, blank=True, null=True)
     summary = models.TextField(blank=True, null=True)
     movieDescriptionID = models.ForeignKey('MovieDescriptions', models.DO_NOTHING, db_column='moviedescriptionid', blank=True, null=True)
-    # descriptionTsVector = models.SearchVectorField()
+    search_vector = SearchVector(editable=False)
 
     class Meta:
         managed = False
@@ -134,6 +137,21 @@ class Movies(models.Model):
 
     def __str__(self):
         return self.title
+
+    # def save(self):
+    #     document = Concat(
+    #         'title', models.Value(self.title),
+    #         'categories', models.Value(self.categories),
+    #         'summary', models.Value(self.summary),
+    #         'description', models.Value(MovieDescriptions.objects.get(pk=self.movieDescriptionID_id))
+    #     )
+    #     vector = SearchVector('title', weight='A') + \
+    #              SearchVector('categories', weight='C') + \
+    #              SearchVector('summary', weight='B') + \
+    #              SearchVector('description', weight='D')
+    #
+    #     self.search_vector = Movies.objects.annotate(document=vector).values_list('document', flat=True)[0]
+    #     super(Movies, self).save()
 
 
 class MovieDescriptions(models.Model):
@@ -146,3 +164,12 @@ class MovieDescriptions(models.Model):
 
     def __str__(self):
         return str(self.movieDescriptionID)
+
+
+class SearchVectorTriggeredField(models.Field):
+
+    def db_type(self, connection):
+        return 'tsvector'
+
+
+

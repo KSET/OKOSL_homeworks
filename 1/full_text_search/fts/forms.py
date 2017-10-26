@@ -19,7 +19,7 @@ class SearchForm(forms.Form):
     #               'Documentary', 'Classics', 'Action', 'New',
     #               'Sports', 'Family', 'Children', 'Travel',
     #               'Horror', 'Games', 'Drama', 'Sci-Fi']
-
+    # uvjet_pretrage = forms.CharField(label='Uvjet pretrage', max_length=100, help_text='Unesi frazu koju tražiš')
     title = forms.CharField(label='Title', max_length=100, initial='Movie title', required=False)
     # category = forms.MultipleChoiceField(label='Category: ', choices=categories)
     category = forms.CharField(label='Category', max_length=100, initial='Movie category', required=False)
