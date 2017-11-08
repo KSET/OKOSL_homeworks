@@ -27,6 +27,7 @@ def unos(request):
             movie.save()
             print(movie)
             print(movie.movieID)
+            print(Movies.objects.filter(movie.movieID).search_vector)
             # redirect to a new URL:
             return HttpResponseRedirect(reverse('fts:detail', args=(movie.movieID,)))
             # return HttpResponseRedirect(str(movie.id) + '/detail/')

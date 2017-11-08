@@ -36,7 +36,6 @@ class Movies(models.Model):
     categories = models.CharField(max_length=50, blank=True, null=True, choices=categoryChoices)
     summary = models.TextField(blank=True, null=True)
     movieDescriptionID = models.ForeignKey('MovieDescriptions', models.DO_NOTHING, db_column='moviedescriptionid', blank=True, null=True)
-    search_vector = SearchVectorField('title')# + SearchVectorField('summary')
 
     class Meta:
         managed = True
