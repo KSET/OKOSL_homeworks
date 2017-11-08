@@ -20,3 +20,50 @@ SET moviedescriptionID = (
 	WHERE movie.description = md.description);
 
 ALTER TABLE movie DROP COLUMN description;
+
+
+ALTER TABLE movie ADD COLUMN movie_id SERIAL PRIMARY KEY;
+movies=# ALTER TABLE movie DROP COLUMN movieid;
+
+
+
+
+
+ALTER TABLE movie ADD COLUMN search_vector tsvector;
+
+UPDATE movie
+SET search_vector = 
+	setweight(to_tsvector(coalesce(title, '')), 'A')    ||
+	setweight(to_tsvector(coalesce(categories, '')), 'B') ||
+	setweight(to_tsvector(coalesce(summary, '')), 'C') ||
+	setweight(to_tsvector(coalesce((
+		SELECT description
+		FROM MovieDescriptions
+		WHERE MovieDescriptions.movieDescriptionID = Movie.movieDescriptionID), '')), 'D');
+
+
+-- function
+CREATE OR REPLACE FUNCTION generate_ts_vector (title VARCHAR(255), categories VARCHAR(255), summary TEXT, description TEXT)
+RETURNS tsvector AS $$
+BEGIN
+RETURN 
+setweight(to_tsvector(coalesce(title, '')), 'A') ||
+setweight(to_tsvector(coalesce(categories, '')), 'B') ||
+setweight(to_tsvector(coalesce(summary, '')), 'C') ||
+setweight(to_tsvector(coalesce((
+description), '')), 'D');
+END
+$$ LANGUAGE plpgsql;
+
+
+-- stored procedure
+CREATE OR REPLACE FUNCTION autogenerate_ts_vector (newId INT, newtitle VARCHAR(255), newcategories VARCHAR(255), newsummary TEXT, newdescription TEXT)
+RETURNS void AS $$
+BEGIN
+UPDATE movie
+SET search_vector = generate_ts_vector(newtitle, newcategories, newsummary, newdescription)
+WHERE movie.id = newId
+;
+END
+$$
+LANGUAGE plpgsql;

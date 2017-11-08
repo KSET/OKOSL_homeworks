@@ -8,7 +8,8 @@
 <h1>Unos: </h1>
 <form method="post">
     {% csrf_token %}
-    {{ form }}
+    {{ movie_form.as_p }}
+    {{ desc_form.as_ul }}
     <input type="submit" value="Submit" />
     <input type="reset" value="Reset" />
 </form>

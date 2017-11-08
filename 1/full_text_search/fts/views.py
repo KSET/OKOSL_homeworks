@@ -15,18 +15,15 @@ def unos(request):
     # if this is a POST request we need to process the form data
     if request.method == 'POST':
         # create a form instance and populate it with data from the request:
-        form = MovieForm(request.POST)
+        movie_form = MovieForm(request.POST)
+        desc_form = DescriptionForm(request.POST)
         # check whether it's valid:
-        if form.is_valid():
+        if movie_form.is_valid() and desc_form.is_valid():
             # process the data in form.cleaned_data as required
-            movie_description = MovieDescriptions.objects.create(description=form.cleaned_data['description'])
+            movie_description = MovieDescriptions.objects.create(description=desc_form.cleaned_data['description'])
             movie_description.save()
-            print("LALALALALA")
-            for d in form.cleaned_data.keys():
-                print(d, form.cleaned_data[d])
-            print("TU SMO: ", movie_description.movieDescriptionID)
-            movie = Movies.objects.create(title=form.cleaned_data['title'], categories=form.cleaned_data['category'],
-                                          summary=form.cleaned_data['summary'], movieDescriptionID=movie_description)
+            movie = Movies.objects.create(title=movie_form.cleaned_data['title'], categories=movie_form.cleaned_data['categories'],
+                                          summary=movie_form.cleaned_data['summary'], movieDescriptionID=movie_description)
             movie.save()
             print(movie)
             print(movie.movieID)
@@ -36,9 +33,10 @@ def unos(request):
 
     # if a GET (or any other method) we'll create a blank form
     else:
-        form = MovieForm()
+        movie_form = MovieForm()
+        desc_form = DescriptionForm()
 
-    return render(request, 'fts/fts.html', {'form': form})
+    return render(request, 'fts/fts.html', {'movie_form': movie_form, 'desc_form': desc_form})
 
 
 def pretraga(request):
