@@ -1,10 +1,12 @@
 from flask_wtf import FlaskForm
-from wtforms import StringField, PasswordField, BooleanField, SubmitField
+from flask_wtf.file import FileField, FileRequired
+from wtforms import StringField, SubmitField, TextAreaField
 from wtforms.validators import DataRequired
 
 
 class LoginForm(FlaskForm):
-	username = StringField("Username", validators=[DataRequired()])
-	password = PasswordField("Password", validators=[DataRequired()])
-	remember_me = BooleanField("Remember Me")
-	submit = SubmitField("Sign in")
+	title = StringField("Title", validators=[DataRequired()])
+	author = StringField("Author", validators=[DataRequired()])
+	body = TextAreaField("Body", validators=[DataRequired()])
+	image = FileField("Image", validators=[FileRequired()])
+	submit = SubmitField("Publish")
