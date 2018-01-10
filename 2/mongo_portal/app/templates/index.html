@@ -7,8 +7,11 @@
 	    <hr>
 		    <li>
 			    <div class="w3-container w3-hover-light-grey">
-		    		<a href="{{ url_for('news_post', news_id=post.id) }}">
-		    			<h1>{{ post.title }}</h1>
+		    		<a href="{{ url_for('news_post', news_id=post._id) }}">
+		    			<span>
+		    				<img src="{{ post.image }}" height="50px" width="auto" display="inline-block">
+		    				<h1>{{ post.title }}</h1>
+		    			</span>
 		    		</a>
 		    		<h4>Autor: {{ post.author }}</h2>
 		    		<p>{{ post.body }}</p>

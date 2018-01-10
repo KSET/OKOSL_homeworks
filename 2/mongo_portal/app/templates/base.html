@@ -1,18 +1,23 @@
 <html>
-  <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css"> 
+  <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
+  <link rel="stylesheet" type="text/css" href="/static/news.css">
   <head>
     {% if title %}
-    <title>{{ title }} - Mongolian Portal</title>
+    <title>{{ title }} - Mongo Portal</title>
     {% else %}
-    <title>Welcome to Mongolian Portal</title>
+    <title>Welcome to Mongo Portal</title>
     {% endif %}
   </head>
   <body>
+    <header>
+      <h1>Mongo Portal!</h1>
+    </header>
+    <nav>
       <div class="w3-bar w3-red w3-xlarge">
-        Mongolian Portal:
         <a href="{{ url_for('index') }}" class="w3-button">Home</a>
         <a href="{{ url_for('login') }}" class="w3-button">Login</a>
       </div>
+    </nav>
       <hr>
       {% with messages = get_flashed_messages() %}
       {% if messages %}
@@ -25,7 +30,6 @@
       </div>
       {% endif %}
       {% endwith %}
-
       {% block content %}{% endblock %}
 </body>
 </html>

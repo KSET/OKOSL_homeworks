@@ -1,0 +1,27 @@
+#content-wrapper{
+  display:table;
+  margin-left: 50px;
+}
+
+#content{
+  display:table-row;
+}
+
+#content>div{
+  display:table-cell
+}
+
+/*adding some extras for demo purposes*/
+#content-wrapper{
+  position:absolute;
+}
+#text-body{
+  width: 50%;
+  margin-left: 50px;
+  float: left;
+}
+#text-image{
+  width: 50%;
+  margin-left: 50px;
+  float: right;
+}

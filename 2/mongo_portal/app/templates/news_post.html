@@ -1,7 +1,23 @@
 {% extends "base.html" %}
 
 {% block content %}
-	<h1>News ID: {{ post.id }}</h1>
-	<p>{{ post.body }}</p>
-	<img src="/static/rpi.png">
+	{% if error_flag %}
+		<h1>Article not found!</h1>
+
+	{% else %}
+		<h1>{{ post.title }}</h1>
+		<h5>Published: {{ post.date }}</h5>
+		<div id="content-wrapper">
+			<div id="content">
+				<div id="text-body">
+					<p>{{ post.body }}</p>
+				</div>
+				<div id="text-image">
+					<img src="{{ post.image }}" height="400" width="auto">
+				</div>
+			</div>
+			<hr>
+			<h5>Author: {{ post.author }}</h5>
+		</div>
+	{% endif %}
 {% endblock %}
