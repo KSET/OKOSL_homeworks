@@ -15,3 +15,4 @@ class LoginForm(FlaskForm):
 class CommentForm(FlaskForm):
 	author = StringField("Author", validators=[DataRequired()])
 	body = TextAreaField("Comment", validators=[DataRequired()])
+	submit = SubmitField("Comment")

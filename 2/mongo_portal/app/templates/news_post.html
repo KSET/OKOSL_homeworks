@@ -7,36 +7,51 @@
 	{% else %}
 		<h1>{{ post.title }}</h1>
 		<h5>Published: {{ post.date }}</h5>
-		<div id="content-wrapper">
-			<div id="content">
-				<div id="text-body">
-					<p>{{ post.body }}</p>
+		<div>
+			<div id="content-wrapper">
+				<div id="content">
+					<div id="text-body">
+						<p>{{ post.body }}</p>
+					</div>
+					<div id="text-image">
+						<img src="{{ post.image }}" height="400" width="auto">
+					</div>
 				</div>
-				<div id="text-image">
-					<img src="{{ post.image }}" height="400" width="auto">
-				</div>
+				<hr>
+				<h5>Author: {{ post.author }}</h5>
 			</div>
 			<hr>
-			<h5>Author: {{ post.author }}</h5>
-		</div>
-		<div>
-			<h3>Comment if you want:</h3>
-			{{ form.hidden_tag() }}
-			<p>
-				{{ form.author.label }}<br>
-				{{ form.author(size=100) }}
-				{% for error in form.author.errors %}
-				<span style="color: red;">[{{ error }}]</span>
-				{% endfor %}
-			</p>
-			<p>
-				{{ form.body.label }}<br>
-				{{ form.body() }}
-				{% for error in form.body.errors %}
-				<span style="color: red;">[{{ error }}]</span>
-				{% endfor %}
-			</p>
-			<p>{{ form.submit() }}</p>
+			<div id="comment-wrapper">
+				<div id="add-comment">
+					<h3>Comment if you want:</h3>
+					<form action="" method="post">
+						{{ form.hidden_tag() }}
+						<p>
+							{{ form.author.label }}<br>
+							{{ form.author(size=100) }}
+							{% for error in form.author.errors %}
+							<span style="color: red;">[{{ error }}]</span>
+							{% endfor %}
+						</p>
+						<p>
+							{{ form.body.label }}<br>
+							{{ form.body() }}
+							{% for error in form.body.errors %}
+							<span style="color: red;">[{{ error }}]</span>
+							{% endfor %}
+						</p>
+						<p>{{ form.submit() }}</p>
+					</form>
+				</div>
+
+				<div id="all-comments">
+					<h3>Comments:</h3>
+					{% for comment in post.comments  %}
+						<h4>{{ comment.author }}:</h4>
+						<p>{{ comment.comment }}</p>
+					{% endfor %} 
+				</div>
+			</div>
 		</div>
 	{% endif %}
 {% endblock %}

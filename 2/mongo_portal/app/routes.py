@@ -59,7 +59,7 @@ def publish():
     return render_template('publish.html', title='Publish', form=form)
 
 
-@app.route('/news/<news_id>')
+@app.route('/news/<news_id>', methods=['GET', 'POST'])
 def news_post(news_id):
     error_flag = None
     form = None
@@ -72,4 +72,21 @@ def news_post(news_id):
         # post = {'id': news_id, 'body': 'Not found!'}
     else:
         form = CommentForm()
+        if form.validate_on_submit():
+            flash("Comment added!")
+            author = form.author.data
+            comment = form.body.data
+
+            mongo.news.find_one_and_update(
+                {'_id': ObjectId(news_id)},
+                {'$push':
+                    {'comments':
+                        {
+                            'author': author,
+                            'comment': comment
+                        }
+                     }
+                 }
+            )
+            return redirect(url_for('news_post', news_id=news_id))
     return render_template('news_post.html', post=post, title=post['title'], error=error_flag, form=form)

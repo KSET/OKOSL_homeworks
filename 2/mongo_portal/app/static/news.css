@@ -14,7 +14,14 @@
 /*adding some extras for demo purposes*/
 #content-wrapper{
   position:absolute;
+  float: top;
 }
+
+#comment-wrapper{
+  position:absolute;
+  float: bottom;
+}
+
 #text-body{
   width: 50%;
   margin-left: 50px;
