@@ -19,5 +19,24 @@
 			<hr>
 			<h5>Author: {{ post.author }}</h5>
 		</div>
+		<div>
+			<h3>Comment if you want:</h3>
+			{{ form.hidden_tag() }}
+			<p>
+				{{ form.author.label }}<br>
+				{{ form.author(size=100) }}
+				{% for error in form.author.errors %}
+				<span style="color: red;">[{{ error }}]</span>
+				{% endfor %}
+			</p>
+			<p>
+				{{ form.body.label }}<br>
+				{{ form.body() }}
+				{% for error in form.body.errors %}
+				<span style="color: red;">[{{ error }}]</span>
+				{% endfor %}
+			</p>
+			<p>{{ form.submit() }}</p>
+		</div>
 	{% endif %}
 {% endblock %}

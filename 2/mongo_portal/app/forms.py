@@ -10,3 +10,8 @@ class LoginForm(FlaskForm):
 	body = TextAreaField("Body", validators=[DataRequired()])
 	image = FileField("Image", validators=[FileRequired()])
 	submit = SubmitField("Publish")
+
+
+class CommentForm(FlaskForm):
+	author = StringField("Author", validators=[DataRequired()])
+	body = TextAreaField("Comment", validators=[DataRequired()])
