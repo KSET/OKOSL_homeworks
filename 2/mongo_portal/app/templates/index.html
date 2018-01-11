@@ -3,25 +3,43 @@
 {% block content %}
 	<h1>Hi!</h1>
     <ol>
-	    {% for post in posts %}
+	    {% for i in post_index %}
 	    <hr>
 		    <li>
 			    <div class="w3-container w3-hover-light-grey">
-		    		<a href="{{ url_for('news_post', news_id=post._id) }}">
+		    		<a href="{{ url_for('news_post', news_id=posts[i]._id) }}">
 		    			<span>
-		    				<img src="{{ post.image }}" height="50px" width="auto" display="inline-block">
-		    				<h1>{{ post.title }}</h1>
+		    				<img src="{{ posts[i].image }}" height="50px" width="auto" display="inline-block">
+		    				<h1>{{ posts[i].title }}</h1>
 		    			</span>
 		    		</a>
-		    		<h4>Author: {{ post.author }}</h4>
-		    		<h5>Date: {{ post.date }}</h5>
-		    		<p>{{ post.body }}</p>
+		    		<h4>Author: {{ posts[i].author }}</h4>
+		    		<h5>Date: {{ posts[i].date }}</h5>
+		    		<p>{{ posts[i].body }}</p>
 			    </div>
+			    <div>
+			<div class="w3-container">
+				<h3>Comment if you want to:</h3>
+				<form action="" method="post" class="w3-container">
+					{{ forms[i].hidden_tag() }}
+					<p>
+						{{ forms[i].author.label }}<br>
+						{{ forms[i].author(size=100, class_="w3-input w3-border-orange") }}
+						{% for error in forms[i].author.errors %}
+						<span style="color: red;">[{{ error }}]</span>
+						{% endfor %}
+					</p>
+					<p>
+						{{ forms[i].body.label }}<br>
+						{{ forms[i].body(class_="w3-input w3-border-orange") }}
+						{% for error in forms[i].body.errors %}
+						<span style="color: red;">[{{ error }}]</span>
+						{% endfor %}
+					</p>
+					<p>{{ forms[i].submit() }}</p>
+				</form>
+			</div>
 			</li>
 	    {% endfor %}
 	</ol>
-{% endblock %}
-
-{% block mali %}
-	<h1>Lovro smrdi!</h1>
 {% endblock %}
