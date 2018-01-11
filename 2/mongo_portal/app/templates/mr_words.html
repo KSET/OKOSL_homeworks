@@ -1,0 +1,20 @@
+{% extends "base.html" %}
+
+{% block content %}
+	<h1>Author Word Count!</h1>
+    <ol>
+	    {% for author in authors %}
+	    <hr>
+		    <li>
+			    <div class="w3-container w3-hover-light-grey">
+		    		<h1>Author: {{ author._id }}</h1>
+		    		<p><h2>Words:</h2>
+		    			{% for word in author.value %}
+		    			<h3>{{ word.word }}: {{ word.count }}</h3>
+		    			{% endfor %}
+		    		</p>
+			    </div>
+			</li>
+	    {% endfor %}
+	</ol>
+{% endblock %}
