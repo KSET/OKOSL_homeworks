@@ -14,16 +14,10 @@ def homeworks(page=1):
     return render_template('homeworks.html')
 
 
-@app.route('/member')
-@login_required  # Use of @login_required decorator
-def member_page():
-    return render_template('member.html', username=current_user.username)
-
-
 @app.route('/admin')
 @roles_required('Admin')
 def admin_page():
-    return render_template('admin.html', username=current_user.username)
+    return render_template('admin.html')
 
 
 @app.route('/publish', methods=['GET', 'POST'])

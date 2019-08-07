@@ -3,7 +3,8 @@ from config import Config
 from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
 from flask_user import UserManager
-
+from flask_admin import Admin
+from .admin import SecureAdminView
 
 app = Flask(__name__)
 app.config.from_object(Config)
@@ -15,6 +16,13 @@ migrate = Migrate(app, db)
 
 from .models import User, Role, Homework, Task, SolutionGroup, Solution, Remark, UserRoles # noqa
 
+model_list = [User, Role, Homework, Task, SolutionGroup, Solution, Remark, UserRoles]
+
 user_manager = UserManager(app, db, User)
+
+admin = Admin(app, name=app.config['APP_NAME'], template_mode='bootstrap3')
+
+for model in model_list:
+    admin.add_view(SecureAdminView(model, db.session, name=model.__tablename__))
 
 from app import routes  # noqa
