@@ -1,10 +1,12 @@
 from app import db
 from datetime import datetime
 from flask_user import UserMixin
+from sqlalchemy.schema import UniqueConstraint
 
 
 class Homework(db.Model):
     __tablename__ = "homeworks"
+    __table_args__ = (UniqueConstraint('ordinal_number', 'year', name="unique_homework_year"))
     id = db.Column(db.Integer, primary_key=True)
     ordinal_number = db.Column(db.Integer, nullable=False)
     name = db.Column(db.String(255), nullable=True)  # in case we want to name the homework
