@@ -5,16 +5,23 @@ from sqlalchemy.schema import UniqueConstraint
 
 
 class Homework(db.Model):
+    """Homework model. Each homework uniquely defined by its ordinal number and the AY it occurs in."""
+
     __tablename__ = "homeworks"
     __table_args__ = (UniqueConstraint('ordinal_number', 'year', name="unique_homework_year"))
     id = db.Column(db.Integer, primary_key=True)
     ordinal_number = db.Column(db.Integer, nullable=False)
     name = db.Column(db.String(255), nullable=True)  # in case we want to name the homework
-    year = db.Column(db.Integer, unique=True, nullable=False)
+    # a dedicated model for years could be added, but this would increase the complexity of the model,
+    # and but the sole benefit would be getting all years in the database, and there will be only a
+    # few homeworks per year, so it is probably not worth the increase in complexity
+    year = db.Column(db.Integer, nullable=False)
     tasks = db.relationship("Task", backref="homework", lazy="dynamic")
 
 
 class Task(db.Model):
+    """Task model. Each task has its number, text, and the ID of the homework it belongs to."""
+
     __tablename__ = "tasks"
     id = db.Column(db.Integer, primary_key=True)
     task_number = db.Column(db.Integer, nullable=False)
@@ -24,40 +31,61 @@ class Task(db.Model):
 
 
 class SolutionGroup(db.Model):
+    """Solution Group model. Each task has several possible solutions, correct or otherwise.
+    However, some solutions may be syntactically different, but functionally identical
+    (e.g. ls -al and ls -la), so it makes sense to group these. This model enables it.
+    """
+
     __tablename__ = "solution_groups"
     id = db.Column(db.Integer, primary_key=True)
     task_id = db.Column(db.Integer, db.ForeignKey("tasks.id"), nullable=False)
     solutions = db.relationship("Solution", backref="task", lazy="dynamic")
-    # the following fields should be filled once a final, aggregate comment is written
-    final_comment = db.Column(db.Text, nullable=True)
+    # the following fields should be filled once a final, aggregate remark is written
+    final_remark = db.Column(db.Text, nullable=True)
     final_score_penalty = db.Column(db.Integer, nullable=True)
 
 
 class Solution(db.Model):
+    """Solution model. Each solution should be uniquely determined by its text. There is no
+    'unique' constraint in place because several tasks may have the same solution, and avoiding
+    that problem would muddy the model up.
+    A solution may be functionally identical to other solutions, so each
+    solution belongs to a single SolutionGroup.
+    """
+
     __tablename__ = "solutions"
     id = db.Column(db.Integer, primary_key=True)
     solution_text = db.Column(db.Text, nullable=False)
-    comments = db.relationship("Comment", backref="solution", lazy="dynamic")
+    remarks = db.relationship("Remark", backref="solution", lazy="dynamic")
     solution_group_id = db.Column(db.Integer, db.ForeignKey("solution_groups.id"), nullable=False)
 
 
-class Comment(db.Model):
-    __tablename__ = "comments"
+class Remark(db.Model):
+    """Remark model. Each solution can have a remark. Each remark consists of its text
+    (a reviewer's comment on the solution) and its score penalty. The score penalty should
+    be positive because it will be subtracted from the maximum attainable score. If a score
+    penalty is negative, this would be a score reward (e.g. in the case of a particularly innovative
+    solution.)
+    """
+
+    __tablename__ = "remarks"
     id = db.Column(db.Integer, primary_key=True)
     text = db.Column(db.Text, nullable=False)
     score_penalty = db.Column(db.Float(), nullable=False)
-    author = db.Column(db.String(255), nullable=True)  # this should reflect users once implemented
+    author_id = db.Column(db.Integer, db.ForeignKey("users.id"), nullable=False)
     date = db.Column(db.DateTime, nullable=False, default=datetime.utcnow)
-    solution_id = db.Column(db.Integer, db.ForeignKey("solutions.id"), nullable=False)
+    solution_group_id = db.Column(db.Integer, db.ForeignKey("solution_groups.id"), nullable=False)
 
 
 class User(db.Model, UserMixin):
+    """User model. This is used by the Flask-User module, which handles user authentification.
+    Additionally, each solution group remark has an author, which is a user.
+    """
+
     __tablename__ = 'users'
     id = db.Column(db.Integer, primary_key=True)
     active = db.Column('is_active', db.Boolean(), nullable=False, server_default='1')
 
-    # User authentication information. The collation='NOCASE' is required
-    # to search case insensitively when USER_IFIND_MODE is 'nocase_collation'.
     username = db.Column(db.String(100), nullable=False, unique=True)
     email = db.Column(db.String(255), nullable=False, unique=True)
     email_confirmed_at = db.Column(db.DateTime())
@@ -69,6 +97,7 @@ class User(db.Model, UserMixin):
 
     # Define the relationship to Role via UserRoles
     roles = db.relationship('Role', secondary='user_roles')
+    remarks = db.relationship('Remark', backref='author_id', lazy='dynamic')
 
     def __init__(self, *args, **kwargs):
         """
@@ -87,6 +116,8 @@ class User(db.Model, UserMixin):
 
 # Define the Role data-model
 class Role(db.Model):
+    """Role model. No, not a role-model. This table models roles users can have (e.g. admin)."""
+
     __tablename__ = 'roles'
     id = db.Column(db.Integer(), primary_key=True)
     name = db.Column(db.String(50), unique=True)
@@ -94,6 +125,8 @@ class Role(db.Model):
 
 # Define the UserRoles association table
 class UserRoles(db.Model):
+    """Association table between users and roles."""
+
     __tablename__ = 'user_roles'
     id = db.Column(db.Integer(), primary_key=True)
     user_id = db.Column(db.Integer(), db.ForeignKey('users.id', ondelete='CASCADE'))
