@@ -1,37 +1,37 @@
 <html>
-  <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
-  <link rel="stylesheet" type="text/css" href="/static/news.css">
   <head>
-    {% if title %}
-    <title>{{ title }} - Mongo Portal</title>
-    {% else %}
-    <title>Welcome to Mongo Portal</title>
-    {% endif %}
+    <title>OKOSL Homeworks</title>
+    <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
   </head>
   <body>
     <header>
-      <h1>Mongo Portal!</h1>
+      <h1>OKOSL Homeworks - hi {{ current_user.username }}!</h1>
     </header>
     <nav>
-      <div class="w3-bar w3-red w3-xlarge">
-        <a href="{{ url_for('index') }}" class="w3-button">Home</a>
-        <a href="{{ url_for('publish') }}" class="w3-button">Publish</a>
-        <a href="{{ url_for('map_reduce_comments') }}" class="w3-button">MapReduce Comments</a>
-        <a href="{{ url_for('map_reduce_words') }}" class="w3-button">MapReduce Words</a>
+      <div class="w3-bar w3-orange w3-xlarge">
+        <a href={{ url_for('homeworks') }}>Homeworks</a>
+        {% if current_user.has_role('Admin') %}
+          <a href={{ url_for('admin_page') }}>Admin Page</a>
+        {% endif %}
+        <a href={{ url_for('user.edit_user_profile') }}>Edit user details</a>
+        <a href={{ url_for('user.logout') }}>Sign out</a>
       </div>
     </nav>
-      <hr>
-      {% with messages = get_flashed_messages() %}
+    print {{ current_user.has_role('Admin') }}
+    <hr>
+    {% with messages = get_flashed_messages() %}
       {% if messages %}
-      <div class="w3-container w3-orange">
-        <ul>
-          {% for message in messages %}
-          <li>{{ message }}</li>
-          {% endfor %}
-        </ul>
-      </div>
+        <div class="w3-container w3-red">
+          <ul>
+            {% for message in messages %}
+              <li>{{ message }}</li>
+            {% endfor %}
+          </ul>
+        </div>
       {% endif %}
-      {% endwith %}
-      {% block content %}{% endblock %}
-</body>
+    {% endwith %}
+
+    {% block content %}{% endblock %}
+
+  </body>
 </html>
