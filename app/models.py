@@ -8,7 +8,7 @@ class Homework(db.Model):
     """Homework model. Each homework uniquely defined by its ordinal number and the AY it occurs in."""
 
     __tablename__ = "homeworks"
-    __table_args__ = (UniqueConstraint('ordinal_number', 'year', name="unique_homework_year"))
+    __table_args__ = (UniqueConstraint('ordinal_number', 'year', name="unique_homework_year"),)
     id = db.Column(db.Integer, primary_key=True)
     ordinal_number = db.Column(db.Integer, nullable=False)
     name = db.Column(db.String(255), nullable=True)  # in case we want to name the homework
@@ -56,7 +56,6 @@ class Solution(db.Model):
     __tablename__ = "solutions"
     id = db.Column(db.Integer, primary_key=True)
     solution_text = db.Column(db.Text, nullable=False)
-    remarks = db.relationship("Remark", backref="solution", lazy="dynamic")
     solution_group_id = db.Column(db.Integer, db.ForeignKey("solution_groups.id"), nullable=False)
 
 
@@ -87,8 +86,8 @@ class User(db.Model, UserMixin):
     active = db.Column('is_active', db.Boolean(), nullable=False, server_default='1')
 
     username = db.Column(db.String(100), nullable=False, unique=True)
-    email = db.Column(db.String(255), nullable=False, unique=True)
-    email_confirmed_at = db.Column(db.DateTime())
+    # email = db.Column(db.String(255), nullable=False, unique=True)
+    added_at = db.Column(db.DateTime(), default=datetime.now)
     password = db.Column(db.String(255), nullable=False, server_default='')
 
     # User information
@@ -97,7 +96,7 @@ class User(db.Model, UserMixin):
 
     # Define the relationship to Role via UserRoles
     roles = db.relationship('Role', secondary='user_roles')
-    remarks = db.relationship('Remark', backref='author_id', lazy='dynamic')
+    remarks = db.relationship('Remark', backref='author', lazy='dynamic')
 
     def __init__(self, *args, **kwargs):
         """
