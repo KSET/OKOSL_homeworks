@@ -3,7 +3,9 @@ from app.forms import LoginForm  # , CommentForm
 from flask import render_template, flash, redirect, url_for
 # from werkzeug.utils import secure_filename
 from flask_user import login_required, roles_required, current_user
+from .models import Homework
 # import datetime
+
 
 NUMBER_OF_ARTICLES = 3
 
@@ -11,7 +13,9 @@ NUMBER_OF_ARTICLES = 3
 @app.route('/', methods=['GET', 'POST'])
 @login_required
 def homeworks(page=1):
-    return render_template('homeworks.html')
+    years = sorted([homework.year for homework in Homework.query.distinct(Homework.year)])
+    homeworks_by_year = {year: list(Homework.query.filter(Homework.year == year)) for year in years}
+    return render_template('homeworks.html', years=years, homeworks_by_year=homeworks_by_year)
 
 
 @app.route('/admin')

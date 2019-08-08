@@ -1,6 +1,35 @@
 {% extends "base.html" %}
 
 {% block content %}
-	<h1>Hi!</h1>
+  <h1>Homeworks</h1>
+  <div class="container">
+    <select id="mySelect" onchange="changeYear()">
+      {% for year in years %}
+        <option value="{{ year }}">{{ year }}</option>
+      {% endfor %}
+    </select>
+  </div>
+
+  <div class="container">
+    {% for year in years %}
+    <div class="container" id="hw-{{ year }}">
+      <ul class="list-group">
+        {% for hw in homeworks_by_year[year] %}
+        <li class="list-group-item">{{ TODO hw.name ili nešto, retrieval iz dicta }}</li>
+        }
+      </ul>
+    </div>
+    {% endfor %}
+
+
+
+<script>
+function changeYear() {
+  var x = document.getElementById("homeworksByYear").value;
+  document.getElementById("demo").innerHTML =
+}
+</script>
+
+
     
 {% endblock %}
