@@ -4,6 +4,13 @@ from flask_user import UserMixin
 from sqlalchemy.schema import UniqueConstraint
 
 
+SNIPPET_LENGTH = 20
+
+
+def get_text_snippet(text):
+    return text if len(text) < SNIPPET_LENGTH else f'{text[:SNIPPET_LENGTH - 3]}...'
+
+
 class Homework(db.Model):
     """Homework model. Each homework uniquely defined by its ordinal number and the AY it occurs in."""
 
@@ -18,6 +25,20 @@ class Homework(db.Model):
     year = db.Column(db.Integer, nullable=False)
     tasks = db.relationship("Task", backref="homework", lazy="dynamic")
 
+    def __repr__(self):
+        """
+        Override the default string representation method
+        """
+        return f'<HW name: {self.name}>'
+
+    def __init__(self, *args, **kwargs):
+        """
+        Overriding to add default name if empty - set it to DZ<number>-<year>
+        """
+        if 'name' not in kwargs:
+            kwargs['name'] = f'DZ{kwargs["ordinal_number"]}-{kwargs["year"]}'
+        super().__init__(*args, **kwargs)
+
 
 class Task(db.Model):
     """Task model. Each task has its number, text, and the ID of the homework it belongs to."""
@@ -28,6 +49,12 @@ class Task(db.Model):
     task_text = db.Column(db.Text, nullable=False)
     homework_id = db.Column(db.Integer, db.ForeignKey("homeworks.id"), nullable=False)
     solution_groups = db.relationship("SolutionGroup", backref="task", lazy="dynamic")
+
+    def __repr__(self):
+        """
+        Override the default string representation method
+        """
+        return f'<HWID:{self.homework_id};Task#{self.task_number}>'
 
 
 class SolutionGroup(db.Model):
@@ -44,6 +71,12 @@ class SolutionGroup(db.Model):
     final_remark = db.Column(db.Text, nullable=True)
     final_score_penalty = db.Column(db.Integer, nullable=True)
 
+    def __repr__(self):
+        """
+        Override the default string representation method
+        """
+        return f'<SGID:{self.id};TaskID:{self.task_id}>'
+
 
 class Solution(db.Model):
     """Solution model. Each solution should be uniquely determined by its text. There is no
@@ -57,6 +90,12 @@ class Solution(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     solution_text = db.Column(db.Text, nullable=False)
     solution_group_id = db.Column(db.Integer, db.ForeignKey("solution_groups.id"), nullable=False)
+
+    def __repr__(self):
+        """
+        Override the default string representation method
+        """
+        return f'<SolID:{self.id};Text:{get_text_snippet(self.solution_text)}>'
 
 
 class Remark(db.Model):
@@ -74,6 +113,12 @@ class Remark(db.Model):
     author_id = db.Column(db.Integer, db.ForeignKey("users.id"), nullable=False)
     date = db.Column(db.DateTime, nullable=False, default=datetime.utcnow)
     solution_group_id = db.Column(db.Integer, db.ForeignKey("solution_groups.id"), nullable=False)
+
+    def __repr__(self):
+        """
+        Override the default string representation method
+        """
+        return f'<RemarkID:{self.id};Text:{get_text_snippet(self.text)}>'
 
 
 class User(db.Model, UserMixin):
@@ -112,6 +157,12 @@ class User(db.Model, UserMixin):
         """
         return role in [r.name for r in self.roles]
 
+    def __repr__(self):
+        """
+        Override the default string representation method
+        """
+        return f'<Username: {self.username}>'
+
 
 # Define the Role data-model
 class Role(db.Model):
@@ -120,6 +171,12 @@ class Role(db.Model):
     __tablename__ = 'roles'
     id = db.Column(db.Integer(), primary_key=True)
     name = db.Column(db.String(50), unique=True)
+
+    def __repr__(self):
+        """
+        Override the default string representation method
+        """
+        return f'<Role name: {self.name}>'
 
 
 # Define the UserRoles association table
