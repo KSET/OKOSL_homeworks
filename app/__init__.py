@@ -8,7 +8,7 @@ from .admin import SecureAdminView
 
 app = Flask(__name__)
 app.config.from_object(Config)
-# disable fsqla's event system - unused, but if wastes resources if enabled
+# disable fsqla's event system - unused, but it wastes resources if enabled
 # more info: https://stackoverflow.com/questions/33738467/how-do-i-know-if-i-can-disable-sqlalchemy-track-modifications
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 db = SQLAlchemy(app)
