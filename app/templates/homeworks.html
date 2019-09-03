@@ -3,7 +3,7 @@
 {% block content %}
   <h1>Homeworks</h1>
   <div class="container">
-    <select id="mySelect" onchange="changeYear()">
+    <select id="homeworksByYear">
       {% for year in years %}
         <option value="{{ year }}">{{ year }}</option>
       {% endfor %}
@@ -15,21 +15,34 @@
     <div class="container" id="hw-{{ year }}">
       <ul class="list-group">
         {% for hw in homeworks_by_year[year] %}
-        <li class="list-group-item">{{ TODO hw.name ili nešto, retrieval iz dicta }}</li>
-        }
+        <li class="list-group-item">
+          <a href={{ url_for('homework', hw_id=hw.id) }}>
+            <h4>{{ hw.name }}</h4>
+          </a>
+          Year: {{ hw.year }}
+          Number: {{ hw.ordinal_number }}
+          Number of tasks: {{ len(hw.tasks) }}
+        </li>
+        {% endfor %}
       </ul>
     </div>
     {% endfor %}
 
 
 
-<script>
+<!-- <script>
 function changeYear() {
-  var x = document.getElementById("homeworksByYear").value;
-  document.getElementById("demo").innerHTML =
+  var selected_year = document.getElementById("homeworksByYear").value;
+
+  var x = document.getElementById("myDIV");
+  if (x.style.display === "none") {
+    x.style.display = "block";
+  } else {
+    x.style.display = "none";
+  }
 }
 </script>
-
+ -->
 
     
 {% endblock %}
