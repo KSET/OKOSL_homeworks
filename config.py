@@ -10,7 +10,7 @@ class Config(object):
     """
 
     APP_NAME = "OKOSL Homeworks"
-    SECRET_KEY = os.environ.get("SECRET_KEY") or "my-pass-pimpek-penis-27"
+    SECRET_KEY = os.environ.get("SECRET_KEY") or "my-pass-27"
     # URI format: dialect+driver://username:password@host:port/database
     SQLALCHEMY_TRACK_MODIFICATIONS = False    # Avoids SQLAlchemy warning
 
