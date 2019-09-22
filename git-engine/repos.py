@@ -8,7 +8,8 @@ class Repos():
         self.homework_name = homework_name
         self.api_url = 'https://'+os.environ['GITEA_HOST']+'/api/v1'
         self.headers = {'Authorization': 'token '+os.environ['GITEA_TOKEN']}
-        self.repo_location = os.environ['REPO_LOCATION']
+        self.repo_location = os.environ['REPO_LOCATION']+'/'+homework_name
+        os.mkdir(self.repo_location)
         self.repos = []
 
     def clone_n_parse(self):
