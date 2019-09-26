@@ -78,28 +78,8 @@ class SolutionGroup(db.Model):
         return f'<SGID:{self.id};TaskID:{self.task_id}>'
 
 
-class Solution(db.Model):
-    """Solution model. Each solution should be uniquely determined by its text. There is no
-    'unique' constraint in place because several tasks may have the same solution, and avoiding
-    that problem would muddy the model up.
-    A solution may be functionally identical to other solutions, so each
-    solution belongs to a single SolutionGroup.
-    """
-
-    __tablename__ = "solutions"
-    id = db.Column(db.Integer, primary_key=True)
-    solution_text = db.Column(db.Text, nullable=False)
-    solution_group_id = db.Column(db.Integer, db.ForeignKey("solution_groups.id"), nullable=False)
-
-    def __repr__(self):
-        """
-        Override the default string representation method
-        """
-        return f'<SolID:{self.id};Text:{get_text_snippet(self.solution_text)}>'
-
-
 class Remark(db.Model):
-    """Remark model. Each solution can have a remark. Each remark consists of its text
+    """Remark model. Each SolutionGroup can have a remark. Each remark consists of its text
     (a reviewer's comment on the solution) and its score penalty. The score penalty should
     be positive because it will be subtracted from the maximum attainable score. If a score
     penalty is negative, this would be a score reward (e.g. in the case of a particularly innovative
@@ -121,8 +101,63 @@ class Remark(db.Model):
         return f'<RemarkID:{self.id};Text:{get_text_snippet(self.text)}>'
 
 
+class Solution(db.Model):
+    """
+    Solution model. Each solution should be uniquely determined by its text and the solution group it belongs to.
+    Several tasks (e.g. recycled tasks from previous years) may have the same solution, so imposing a unique constraint
+    on solution_text would muddy the model up.
+    A solution may be functionally identical to other solutions, so each solution belongs to a single SolutionGroup.
+    """
+
+    __tablename__ = "solutions"
+    __table_args__ = (
+        db.UniqueConstraint('solution_text', 'solution_group_id', name='_solution_text_group_unique'),
+    )
+    id = db.Column(db.Integer, primary_key=True)
+    solution_text = db.Column(db.Text, nullable=False, unique=False)
+    solution_group_id = db.Column(db.Integer, db.ForeignKey("solution_groups.id"), nullable=False)
+
+    def __repr__(self):
+        """
+        Override the default string representation method
+        """
+        return f'<SolID:{self.id};Text:{get_text_snippet(self.solution_text)}>'
+
+
+class Student(db.Model):
+    """
+    Student model. Used for linking the Solutions with repositories for each submitted homework.
+    """
+
+    __tablename__ = 'students'
+
+    id = db.Column(db.Integer, primary_key=True)
+    jmbag = db.Column(db.String(10), nullable=False, unique=True)  # 10 because JMBAGs at UniZG have 10 digits
+    first_name = db.Column(db.String(100), nullable=True)
+    last_name = db.Column(db.String(100), nullable=True)
+    enrolled_in_year = db.Column(db.Integer, nullable=False)
+
+
+class StudentSolution(db.Model):
+    """
+    Association model which links students to their solutions. There is an additional homework_id
+    field to make pushing remarks for a given homework faster. The alternative is querying up the chain
+    from Solution to SolutionGroup to Task, just to check which homework is being marked.
+    """
+
+    __tablename__ = "students_solutions"
+
+    id = db.Column(db.Integer, primary_key=True)
+    student_id = db.Column(db.Integer, db.ForeignKey("students.id"), nullable=False)
+    solution_id = db.Column(db.Integer, db.ForeignKey("solutions.id"), nullable=False)
+    homework_id = db.Column(db.Integer, db.ForeignKey("homeworks.id"), nullable=False)
+
+    students = db.relationship(Student, backref="students_solutions")
+    solutions = db.relationship(Solution, backref="students_solutions")
+
+
 class User(db.Model, UserMixin):
-    """User model. This is used by the Flask-User module, which handles user authentification.
+    """User model. This is used by the Flask-User module, which handles user authentication.
     Additionally, each solution group remark has an author, which is a user.
     """
 
