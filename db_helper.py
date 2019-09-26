@@ -5,8 +5,7 @@ from flask_user import ConfigError
 
 def add_user(username, roles=[]):
     roles = list(roles)
-    print(f'user={username}; roles={roles}')
-    print(type(roles))
+    print(f'Adding user={username}; roles={roles}')
     if not User.query.filter(User.username == username).first():
         user = User(
             username=username,
@@ -17,5 +16,6 @@ def add_user(username, roles=[]):
 
         db.session.add(user)
         db.session.commit()
+        print(f"User {username} successfully added!")
     else:
         raise ConfigError(f"Username {username} already exists!")
