@@ -1,7 +1,7 @@
 from app import db
 from datetime import datetime
 from flask_user import UserMixin
-from sqlalchemy.schema import UniqueConstraint
+from sqlalchemy.schema import UniqueConstraint, CheckConstraint
 
 
 SNIPPET_LENGTH = 20
@@ -47,6 +47,7 @@ class Task(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     task_number = db.Column(db.Integer, nullable=False)
     task_text = db.Column(db.Text, nullable=False)
+    max_points = db.Column(db.Integer, nullable=False)
     homework_id = db.Column(db.Integer, db.ForeignKey("homeworks.id"), nullable=False)
     solution_groups = db.relationship("SolutionGroup", backref="task", lazy="dynamic")
 
@@ -69,7 +70,12 @@ class SolutionGroup(db.Model):
     solutions = db.relationship("Solution", backref="task", lazy="dynamic")
     # the following fields should be filled once a final, aggregate remark is written
     final_remark = db.Column(db.Text, nullable=True)
-    final_score_penalty = db.Column(db.Integer, nullable=True)
+    final_score_percentage = db.Column(db.Float(), nullable=True)
+
+    __table_args__ = (
+        CheckConstraint(final_score_percentage >= 0, name='check_final_score_percentage_positive'),
+        CheckConstraint(final_score_percentage <= 1.5, name='check_final_score_percentage_not_exceeded'),
+    )
 
     def __repr__(self):
         """
@@ -89,10 +95,15 @@ class Remark(db.Model):
     __tablename__ = "remarks"
     id = db.Column(db.Integer, primary_key=True)
     text = db.Column(db.Text, nullable=False)
-    score_penalty = db.Column(db.Float(), nullable=False)
+    score_percentage = db.Column(db.Float(), nullable=False)
     author_id = db.Column(db.Integer, db.ForeignKey("users.id"), nullable=False)
     date = db.Column(db.DateTime, nullable=False, default=datetime.utcnow)
     solution_group_id = db.Column(db.Integer, db.ForeignKey("solution_groups.id"), nullable=False)
+
+    __table_args__ = (
+        CheckConstraint(score_percentage >= 0, name='check_score_percentage_positive'),
+        CheckConstraint(score_percentage <= 1.5, name='check_score_percentage_not_exceeded'),
+    )
 
     def __repr__(self):
         """
@@ -135,7 +146,6 @@ class Student(db.Model):
     jmbag = db.Column(db.String(10), nullable=False, unique=True)  # 10 because JMBAGs at UniZG have 10 digits
     first_name = db.Column(db.String(100), nullable=True)
     last_name = db.Column(db.String(100), nullable=True)
-    enrolled_in_year = db.Column(db.Integer, nullable=False)
 
 
 class StudentSolution(db.Model):
