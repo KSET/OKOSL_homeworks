@@ -86,9 +86,8 @@ class SolutionGroup(db.Model):
 
 class Remark(db.Model):
     """Remark model. Each SolutionGroup can have a remark. Each remark consists of its text
-    (a reviewer's comment on the solution) and its score penalty. The score penalty should
-    be positive because it will be subtracted from the maximum attainable score. If a score
-    penalty is negative, this would be a score reward (e.g. in the case of a particularly innovative
+    (a reviewer's comment on the solution) and the percentage of the maximum points it attained.
+    This percentage can be between 0 and 1.5 (e.g. in the case of a particularly innovative
     solution.)
     """
 
