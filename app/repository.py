@@ -3,31 +3,30 @@ import json
 import os
 import subprocess
 from config import Config
+from app import db
+import app.models as models
 
-class Repos():
-    def __init__(self, homework_name):
-        self.homework_name = homework_name
-        self.api_url = 'https://'+Config.GITEA_HOST+'/api/v1'
-        self.headers = {'Authorization': 'token '+Config.GITEA_TOKEN}
-        self.repo_location = Config.REPOS_ROOT+'/'+homework_name
-        os.mkdir(self.repo_location)
-        self.repos = []
+class Repository(models.SolvedHomework):
 
-    def clone_n_parse(self):
-        pass
+    def clone_n_parse(homework):
+        homework_name = homework.name
+        repo_location = Config.REPOS_ROOT+'/'+homework_name
+        os.mkdir(repo_location)
+        Repository.clone(Repository.search(homework.name), repo_location)
 
-    def search(self):
+
+    def search(name):
         response = requests.get(
-                self.api_url+'/repos/search',
-                headers = self.headers,
-                params = {'q': self.homework_name})
+                Config.GITEA_API_URL+'/repos/search',
+                headers = Config.GITEA_API_HEADERS,
+                params = {'q': name})
         
-        json_response = json.loads(response.text)
-        self.repos = json_response['data']
+        return json.loads(response.text)['data']
 
-    def clone(self):
-        for repo in self.repos:
+ 
+    def clone(repos, repo_location):
+        for repo in repos:
             subprocess.run(['git', 'clone',
                 repo['ssh_url'],
-                self.repo_location+'/'+repo['owner']['login']])
+                repo_location+'/'+repo['owner']['login']])
 
