@@ -1,14 +1,18 @@
 {% extends "base.html" %}
 
 {% block content %}
-<h1>Homework: {{ homework.name }}</h1>
+<h1>Task number {{ task.task_number }}</h1>
+<h2>Homework {{ task.homework }}</h2>
+<div class="container">
+  <p>{{ task.task_text }}</p>
+</div>
 <div class="container">
   <ul class="list-group">
-  	{% for task in homework.tasks %}
+  	{% for solution_group in task.solution_groups %}
       <li class="list-group-item">
-        <a href={{ url_for('task', task_id=task.id) }}>
-          <h4>Task number {{ task.task_number }}</h4>
-          Text: {{ task.task_text }}
+        <a href={{ url_for('solution_group', sg_id=solution_group.id) }}>
+          <h4>Solution group {{ solution_group.id }}</h4>
+          Text: {{ task.task_text }} TODO OVO DOVRŠIT
           Number of solution groups: {{ len(task.solution_groups) }}
           {# this unresolved solution calculation needs testing #}
           Number of unresolved solution groups: {{ len([group for group in task.solution_groups if group.final_score_penalty is None]) }}
@@ -17,5 +21,4 @@
     {% endfor %}
   </ul>
 </div>
-
 {% endblock %}

@@ -26,6 +26,14 @@ def homework(hw_id):
     return render_template('homework_page.html', homework=homework)
 
 
+@app.route('/tasks/<task_id>')
+@login_required
+def task(task_id):
+    task = Task.query.get(task_id)
+    homework = Homework.query.get(task.homework_id)
+    return render_template('task_page.html', task=task, homework=homework)
+
+
 @app.route('/admin')
 @roles_required('Admin')
 def admin_page():
