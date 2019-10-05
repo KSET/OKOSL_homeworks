@@ -29,6 +29,10 @@ class Config(object):
                                                                    DB_HOST,
                                                                    DB_PORT,
                                                                    DB_NAME)
+    # Git settings
+    GITEA_HOST = os.environ.get("GITEA_HOST")
+    GITEA_TOKEN = os.environ.get("GITEA_TOKEN")
+    REPOS_ROOT = os.environ.get("REPOS_ROOT")
 
     # Flask-User settings - see https://flask-user.readthedocs.io/en/v0.6/customization.html
     # Should mail-related features be used, a SMTP server needs to be specified using e.g. Flask-Mail

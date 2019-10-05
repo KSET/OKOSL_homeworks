@@ -2,13 +2,14 @@ import requests
 import json
 import os
 import subprocess
+from config import Config
 
 class Repos():
     def __init__(self, homework_name):
         self.homework_name = homework_name
-        self.api_url = 'https://'+os.environ['GITEA_HOST']+'/api/v1'
-        self.headers = {'Authorization': 'token '+os.environ['GITEA_TOKEN']}
-        self.repo_location = os.environ['REPO_LOCATION']+'/'+homework_name
+        self.api_url = 'https://'+Config.GITEA_HOST+'/api/v1'
+        self.headers = {'Authorization': 'token '+Config.GITEA_TOKEN}
+        self.repo_location = Config.REPOS_ROOT+'/'+homework_name
         os.mkdir(self.repo_location)
         self.repos = []
 
