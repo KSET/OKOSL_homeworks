@@ -1,0 +1,13 @@
+FLASK_APP=okosl_portal.py
+
+DB_USER=okosl
+DB_PASSWORD=okosl_pass
+DB_HOST=172.17.0.2
+DB_PORT=5432
+DB_NAME=okosl
+
+GITEA_HOST=edu.kset.org
+GITEA_TOKEN=<gitea_api_token>
+REPOS_ROOT=/opt/okosl_repos
+
+SECRET_KEY=
