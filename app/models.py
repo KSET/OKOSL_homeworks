@@ -33,6 +33,14 @@ class Homework(db.Model):
         """
         return f'<HW name: {self.name}>'
 
+    def __init__(self, *args, **kwargs):
+        """
+        Overriding to add default name if empty - set it to DZ<number>-<year>
+        """
+        if 'name' not in kwargs:
+            kwargs['name'] = f'DZ'  # {kwargs["ordinal_number"]}-{kwargs["year"]}'
+        super().__init__(*args, **kwargs)
+
 
 class Task(db.Model):
     """Task model. Each homework is divided into tasks, which roughly correspond to a single topic
@@ -194,7 +202,7 @@ class SolvedHomework(db.Model):
     student_id = db.Column(db.Integer, db.ForeignKey("students.id"), nullable=False)
     homework_id = db.Column(db.Integer, db.ForeignKey("homeworks.id"), nullable=False)
 
-    repo_url = db.Column(db.String(255), nullable=False)
+    repo_path = db.Column(db.String(255), nullable=False)
     # points = db.Column(db.Float(), nullable=True)
     solutions = db.relationship("SolvedHomeworkSolution", back_populates="solved_homework")
 
