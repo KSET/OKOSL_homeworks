@@ -202,7 +202,7 @@ class SolvedHomework(db.Model):
     student_id = db.Column(db.Integer, db.ForeignKey("students.id"), nullable=False)
     homework_id = db.Column(db.Integer, db.ForeignKey("homeworks.id"), nullable=False)
 
-    repo_url = db.Column(db.String(255), nullable=False)
+    repo_path = db.Column(db.String(255), nullable=False)
     # points = db.Column(db.Float(), nullable=True)
     solutions = db.relationship("SolvedHomeworkSolution", back_populates="solved_homework")
 
