@@ -38,7 +38,7 @@ class Homework(db.Model):
         Overriding to add default name if empty - set it to DZ<number>-<year>
         """
         if 'name' not in kwargs:
-            kwargs['name'] = f'DZ{kwargs["ordinal_number"]}-{kwargs["year"]}'
+            kwargs['name'] = f'DZ'  # {kwargs["ordinal_number"]}-{kwargs["year"]}'
         super().__init__(*args, **kwargs)
 
 
