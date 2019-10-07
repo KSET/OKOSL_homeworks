@@ -244,14 +244,6 @@ class User(db.Model, UserMixin):
     roles = db.relationship('Role', secondary='user_roles')
     remarks = db.relationship('Remark', backref='author', lazy='dynamic')
 
-    def __init__(self, *args, **kwargs):
-        """
-        Override the constructor to derive a username from email if not otherwise specified
-        """
-        if 'username' not in kwargs:
-            kwargs['username'] = kwargs['email'].split("@")[0]
-        super().__init__(*args, **kwargs)
-
     def has_role(self, role):
         """
         Thi method simply checks if a user has a certain role.
