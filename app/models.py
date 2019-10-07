@@ -18,7 +18,7 @@ class Homework(db.Model):
     __table_args__ = (UniqueConstraint('ordinal_number', 'year', name="unique_homework_year"),)
     id = db.Column(db.Integer, primary_key=True)
     ordinal_number = db.Column(db.Integer, nullable=False)
-    name = db.Column(db.String(255), nullable=True)  # in case we want to name the homework
+    name = db.Column(db.String(255), nullable=True, default='DZ')  # in case we want to name the homework
     # a dedicated model for years could be added, but this would increase the complexity of the model,
     # and but the sole benefit would be getting all years in the database, and there will be only a
     # few homeworks per year, so it is probably not worth the increase in complexity
@@ -27,19 +27,14 @@ class Homework(db.Model):
     tasks = db.relationship("Task", backref="homework", lazy="dynamic")
     solved_homeworks = db.relationship("SolvedHomework", backref="homework")
 
+    def get_slug(self):
+        return f"{self.name}_{self.ordinal_number}-{self.year}"
+
     def __repr__(self):
         """
         Override the default string representation method
         """
         return f'<HW name: {self.name}>'
-
-    def __init__(self, *args, **kwargs):
-        """
-        Overriding to add default name if empty - set it to DZ<number>-<year>
-        """
-        if 'name' not in kwargs:
-            kwargs['name'] = f'DZ'  # {kwargs["ordinal_number"]}-{kwargs["year"]}'
-        super().__init__(*args, **kwargs)
 
 
 class Task(db.Model):
