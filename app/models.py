@@ -2,6 +2,7 @@ from app import db
 from datetime import datetime
 from flask_user import UserMixin
 from sqlalchemy.schema import UniqueConstraint, CheckConstraint
+from sqlalchemy.ext.orderinglist import ordering_list
 
 
 SNIPPET_LENGTH = 20
@@ -24,7 +25,8 @@ class Homework(db.Model):
     # few homeworks per year, so it is probably not worth the increase in complexity
     year = db.Column(db.Integer, nullable=False)
 
-    tasks = db.relationship("Task", backref="homework", lazy="dynamic")
+    tasks = db.relationship("Task", backref="homework", lazy="dynamic",
+            order_by="Task.task_number", collection_class=ordering_list("task_number"))
     solved_homeworks = db.relationship("SolvedHomework", backref="homework")
 
     def get_slug(self):
@@ -52,7 +54,8 @@ class Task(db.Model):
     solution_filename = db.Column(db.Text, nullable=False)
 
     homework_id = db.Column(db.Integer, db.ForeignKey("homeworks.id"), nullable=False)
-    subtasks = db.relationship("Subtask", backref="task", lazy="dynamic")
+    subtasks = db.relationship("Subtask", backref="task", lazy="dynamic",
+            order_by="Subtask.subtask_number", collection_class=ordering_list("subtask_number"))
 
     def __init__(self, *args, **kwargs):
         """
