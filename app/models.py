@@ -19,10 +19,7 @@ class Homework(db.Model):
     __table_args__ = (UniqueConstraint('ordinal_number', 'year', name="unique_homework_year"),)
     id = db.Column(db.Integer, primary_key=True)
     ordinal_number = db.Column(db.Integer, nullable=False)
-    name = db.Column(db.String(255), nullable=True, default='DZ')  # in case we want to name the homework
-    # a dedicated model for years could be added, but this would increase the complexity of the model,
-    # and but the sole benefit would be getting all years in the database, and there will be only a
-    # few homeworks per year, so it is probably not worth the increase in complexity
+    activity = db.Column(db.String(255), nullable=True, default='DZ')  # in case we want to extend to e.g. lab exercises
     year = db.Column(db.Integer, nullable=False)
 
     tasks = db.relationship("Task", backref="homework", order_by="Task.task_number",
@@ -30,13 +27,13 @@ class Homework(db.Model):
     solved_homeworks = db.relationship("SolvedHomework", backref="homework")
 
     def get_slug(self):
-        return f"{self.name}_{self.ordinal_number}-{self.year}"
+        return f"{self.activity}_{self.ordinal_number}-{self.year}"
 
     def __repr__(self):
         """
         Override the default string representation method
         """
-        return f'<HW name: {self.name}>'
+        return f'<HW: {self.get_slug()}>'
 
 
 class Task(db.Model):
@@ -53,7 +50,7 @@ class Task(db.Model):
     # filename that should exist in the repo and contain the task solution
     solution_filename = db.Column(db.Text, nullable=False)
 
-    homework_id = db.Column(db.Integer, db.ForeignKey("homeworks.id"), nullable=False)
+    homework_id = db.Column(db.Integer, db.ForeignKey("homeworks.id", ondelete="CASCADE"), nullable=False)
     subtasks = db.relationship("Subtask", backref="task", order_by="Subtask.subtask_number",
                                collection_class=ordering_list("subtask_number", count_from=1))
 
@@ -80,7 +77,7 @@ class Subtask(db.Model):
     subtask_number = db.Column(db.Integer, nullable=False)
     subtask_text = db.Column(db.Text, nullable=False)
     max_points = db.Column(db.Float(), nullable=False)
-    task_id = db.Column(db.Integer, db.ForeignKey("tasks.id"), nullable=False)
+    task_id = db.Column(db.Integer, db.ForeignKey("tasks.id", ondelete="CASCADE"), nullable=False)
 
     solution_groups = db.relationship("SolutionGroup", backref="subtask", lazy="dynamic")
 
@@ -99,7 +96,7 @@ class SolutionGroup(db.Model):
 
     __tablename__ = "solution_groups"
     id = db.Column(db.Integer, primary_key=True)
-    subtask_id = db.Column(db.Integer, db.ForeignKey("subtasks.id"), nullable=False)
+    subtask_id = db.Column(db.Integer, db.ForeignKey("subtasks.id", ondelete="CASCADE"), nullable=False)
 
     solutions = db.relationship("Solution", backref="solution_group", lazy="dynamic")
     remarks = db.relationship("Remark", backref="solution_group", lazy="dynamic")
@@ -131,10 +128,10 @@ class Remark(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     text = db.Column(db.Text, nullable=False)
     score_percentage = db.Column(db.Float(), nullable=False)
-    author_id = db.Column(db.Integer, db.ForeignKey("users.id"), nullable=False)
+    author_id = db.Column(db.Integer, db.ForeignKey("users.id", ondelete="SET NULL"))
     date = db.Column(db.DateTime, nullable=False, default=datetime.utcnow)
 
-    solution_group_id = db.Column(db.Integer, db.ForeignKey("solution_groups.id"), nullable=False)
+    solution_group_id = db.Column(db.Integer, db.ForeignKey("solution_groups.id", ondelete="CASCADE"), nullable=False)
 
     __table_args__ = (
         CheckConstraint(score_percentage >= 0, name='check_score_percentage_positive'),
@@ -162,7 +159,7 @@ class Solution(db.Model):
     )
     id = db.Column(db.Integer, primary_key=True)
     solution_text = db.Column(db.Text, nullable=False, unique=False)
-    solution_group_id = db.Column(db.Integer, db.ForeignKey("solution_groups.id"), nullable=False)
+    solution_group_id = db.Column(db.Integer, db.ForeignKey("solution_groups.id", ondelete="CASCADE"), nullable=False)
 
     solved_homeworks = db.relationship("SolvedHomeworkSolution", back_populates="solution")
 
