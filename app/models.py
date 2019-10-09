@@ -128,10 +128,10 @@ class Remark(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     text = db.Column(db.Text, nullable=False)
     score_percentage = db.Column(db.Float(), nullable=False)
-    author_id = db.Column(db.Integer, db.ForeignKey("users.id", ondelete="CASCADE"), nullable=False)
+    author_id = db.Column(db.Integer, db.ForeignKey("users.id", ondelete="SET NULL"))
     date = db.Column(db.DateTime, nullable=False, default=datetime.utcnow)
 
-    solution_group_id = db.Column(db.Integer, db.ForeignKey("solution_groups.id"), nullable=False)
+    solution_group_id = db.Column(db.Integer, db.ForeignKey("solution_groups.id", ondelete="CASCADE"), nullable=False)
 
     __table_args__ = (
         CheckConstraint(score_percentage >= 0, name='check_score_percentage_positive'),
