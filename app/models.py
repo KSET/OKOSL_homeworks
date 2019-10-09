@@ -194,8 +194,8 @@ class SolvedHomework(db.Model):
     __tablename__ = "solved_homeworks"
 
     id = db.Column(db.Integer, primary_key=True)
-    student_id = db.Column(db.Integer, db.ForeignKey("students.id"), nullable=False)
-    homework_id = db.Column(db.Integer, db.ForeignKey("homeworks.id"), nullable=False)
+    student_id = db.Column(db.Integer, db.ForeignKey("students.id", ondelete="CASCADE"), nullable=False)
+    homework_id = db.Column(db.Integer, db.ForeignKey("homeworks.id", ondelete="CASCADE"), nullable=False)
 
     repo_path = db.Column(db.String(255), nullable=False)
     # points = db.Column(db.Float(), nullable=True)
@@ -210,8 +210,8 @@ class SolvedHomeworkSolution(db.Model):
     __tablename__ = "solved_homeworks_solutions"
 
     id = db.Column(db.Integer, primary_key=True)
-    solved_homework_id = db.Column(db.Integer, db.ForeignKey("solved_homeworks.id"), nullable=False)
-    solution_id = db.Column(db.Integer, db.ForeignKey("solutions.id"), nullable=False)
+    solved_homework_id = db.Column(db.Integer, db.ForeignKey("solved_homeworks.id", ondelete="CASCADE"), nullable=False)
+    solution_id = db.Column(db.Integer, db.ForeignKey("solutions.id", ondelete="CASCADE"), nullable=False)
 
     solved_homework = db.relationship("SolvedHomework", back_populates="solutions")
     solution = db.relationship("Solution", back_populates="solved_homeworks")
