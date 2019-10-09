@@ -2,6 +2,7 @@ from app import db
 from datetime import datetime
 from flask_user import UserMixin
 from sqlalchemy.schema import UniqueConstraint, CheckConstraint
+from sqlalchemy.ext.orderinglist import ordering_list
 
 
 SNIPPET_LENGTH = 20
@@ -24,7 +25,8 @@ class Homework(db.Model):
     # few homeworks per year, so it is probably not worth the increase in complexity
     year = db.Column(db.Integer, nullable=False)
 
-    tasks = db.relationship("Task", backref="homework", lazy="dynamic")
+    tasks = db.relationship("Task", backref="homework", order_by="Task.task_number",
+                            collection_class=ordering_list("task_number", count_from=1))
     solved_homeworks = db.relationship("SolvedHomework", backref="homework")
 
     def get_slug(self):
@@ -52,7 +54,8 @@ class Task(db.Model):
     solution_filename = db.Column(db.Text, nullable=False)
 
     homework_id = db.Column(db.Integer, db.ForeignKey("homeworks.id"), nullable=False)
-    subtasks = db.relationship("Subtask", backref="task", lazy="dynamic")
+    subtasks = db.relationship("Subtask", backref="task", order_by="Subtask.subtask_number",
+                               collection_class=ordering_list("subtask_number", count_from=1))
 
     def __init__(self, *args, **kwargs):
         """
@@ -76,7 +79,7 @@ class Subtask(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     subtask_number = db.Column(db.Integer, nullable=False)
     subtask_text = db.Column(db.Text, nullable=False)
-    max_points = db.Column(db.Integer, nullable=False)
+    max_points = db.Column(db.Float(), nullable=False)
     task_id = db.Column(db.Integer, db.ForeignKey("tasks.id"), nullable=False)
 
     solution_groups = db.relationship("SolutionGroup", backref="subtask", lazy="dynamic")
