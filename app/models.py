@@ -2,6 +2,7 @@ from app import db
 from datetime import datetime
 from flask_user import UserMixin
 from sqlalchemy.schema import UniqueConstraint, CheckConstraint
+from sqlalchemy.ext.orderinglist import ordering_list
 
 
 SNIPPET_LENGTH = 20
@@ -18,28 +19,21 @@ class Homework(db.Model):
     __table_args__ = (UniqueConstraint('ordinal_number', 'year', name="unique_homework_year"),)
     id = db.Column(db.Integer, primary_key=True)
     ordinal_number = db.Column(db.Integer, nullable=False)
-    name = db.Column(db.String(255), nullable=True)  # in case we want to name the homework
-    # a dedicated model for years could be added, but this would increase the complexity of the model,
-    # and but the sole benefit would be getting all years in the database, and there will be only a
-    # few homeworks per year, so it is probably not worth the increase in complexity
+    activity = db.Column(db.String(255), nullable=True, default='DZ')  # in case we want to extend to e.g. lab exercises
     year = db.Column(db.Integer, nullable=False)
 
-    tasks = db.relationship("Task", backref="homework", lazy="dynamic")
+    tasks = db.relationship("Task", backref="homework", order_by="Task.task_number",
+                            collection_class=ordering_list("task_number", count_from=1))
     solved_homeworks = db.relationship("SolvedHomework", backref="homework")
+
+    def get_slug(self):
+        return f"{self.activity}_{self.ordinal_number}-{self.year}"
 
     def __repr__(self):
         """
         Override the default string representation method
         """
-        return f'<HW name: {self.name}>'
-
-    def __init__(self, *args, **kwargs):
-        """
-        Overriding to add default name if empty - set it to DZ<number>-<year>
-        """
-        if 'name' not in kwargs:
-            kwargs['name'] = f'DZ'  # {kwargs["ordinal_number"]}-{kwargs["year"]}'
-        super().__init__(*args, **kwargs)
+        return f'<HW: {self.get_slug()}>'
 
 
 class Task(db.Model):
@@ -56,8 +50,9 @@ class Task(db.Model):
     # filename that should exist in the repo and contain the task solution
     solution_filename = db.Column(db.Text, nullable=False)
 
-    homework_id = db.Column(db.Integer, db.ForeignKey("homeworks.id"), nullable=False)
-    subtasks = db.relationship("Subtask", backref="task", lazy="dynamic")
+    homework_id = db.Column(db.Integer, db.ForeignKey("homeworks.id", ondelete="CASCADE"), nullable=False)
+    subtasks = db.relationship("Subtask", backref="task", order_by="Subtask.subtask_number",
+                               collection_class=ordering_list("subtask_number", count_from=1))
 
     def __init__(self, *args, **kwargs):
         """
@@ -81,8 +76,8 @@ class Subtask(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     subtask_number = db.Column(db.Integer, nullable=False)
     subtask_text = db.Column(db.Text, nullable=False)
-    max_points = db.Column(db.Integer, nullable=False)
-    task_id = db.Column(db.Integer, db.ForeignKey("tasks.id"), nullable=False)
+    max_points = db.Column(db.Float(), nullable=False)
+    task_id = db.Column(db.Integer, db.ForeignKey("tasks.id", ondelete="CASCADE"), nullable=False)
 
     solution_groups = db.relationship("SolutionGroup", backref="subtask", lazy="dynamic")
 
@@ -101,7 +96,7 @@ class SolutionGroup(db.Model):
 
     __tablename__ = "solution_groups"
     id = db.Column(db.Integer, primary_key=True)
-    subtask_id = db.Column(db.Integer, db.ForeignKey("subtasks.id"), nullable=False)
+    subtask_id = db.Column(db.Integer, db.ForeignKey("subtasks.id", ondelete="CASCADE"), nullable=False)
 
     solutions = db.relationship("Solution", backref="solution_group", lazy="dynamic")
     remarks = db.relationship("Remark", backref="solution_group", lazy="dynamic")
@@ -133,10 +128,10 @@ class Remark(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     text = db.Column(db.Text, nullable=False)
     score_percentage = db.Column(db.Float(), nullable=False)
-    author_id = db.Column(db.Integer, db.ForeignKey("users.id"), nullable=False)
+    author_id = db.Column(db.Integer, db.ForeignKey("users.id", ondelete="SET NULL"))
     date = db.Column(db.DateTime, nullable=False, default=datetime.utcnow)
 
-    solution_group_id = db.Column(db.Integer, db.ForeignKey("solution_groups.id"), nullable=False)
+    solution_group_id = db.Column(db.Integer, db.ForeignKey("solution_groups.id", ondelete="CASCADE"), nullable=False)
 
     __table_args__ = (
         CheckConstraint(score_percentage >= 0, name='check_score_percentage_positive'),
@@ -164,7 +159,7 @@ class Solution(db.Model):
     )
     id = db.Column(db.Integer, primary_key=True)
     solution_text = db.Column(db.Text, nullable=False, unique=False)
-    solution_group_id = db.Column(db.Integer, db.ForeignKey("solution_groups.id"), nullable=False)
+    solution_group_id = db.Column(db.Integer, db.ForeignKey("solution_groups.id", ondelete="CASCADE"), nullable=False)
 
     solved_homeworks = db.relationship("SolvedHomeworkSolution", back_populates="solution")
 
@@ -199,8 +194,8 @@ class SolvedHomework(db.Model):
     __tablename__ = "solved_homeworks"
 
     id = db.Column(db.Integer, primary_key=True)
-    student_id = db.Column(db.Integer, db.ForeignKey("students.id"), nullable=False)
-    homework_id = db.Column(db.Integer, db.ForeignKey("homeworks.id"), nullable=False)
+    student_id = db.Column(db.Integer, db.ForeignKey("students.id", ondelete="CASCADE"), nullable=False)
+    homework_id = db.Column(db.Integer, db.ForeignKey("homeworks.id", ondelete="CASCADE"), nullable=False)
 
     repo_path = db.Column(db.String(255), nullable=False)
     # points = db.Column(db.Float(), nullable=True)
@@ -215,8 +210,8 @@ class SolvedHomeworkSolution(db.Model):
     __tablename__ = "solved_homeworks_solutions"
 
     id = db.Column(db.Integer, primary_key=True)
-    solved_homework_id = db.Column(db.Integer, db.ForeignKey("solved_homeworks.id"), nullable=False)
-    solution_id = db.Column(db.Integer, db.ForeignKey("solutions.id"), nullable=False)
+    solved_homework_id = db.Column(db.Integer, db.ForeignKey("solved_homeworks.id", ondelete="CASCADE"), nullable=False)
+    solution_id = db.Column(db.Integer, db.ForeignKey("solutions.id", ondelete="CASCADE"), nullable=False)
 
     solved_homework = db.relationship("SolvedHomework", back_populates="solutions")
     solution = db.relationship("Solution", back_populates="solved_homeworks")
@@ -243,14 +238,6 @@ class User(db.Model, UserMixin):
     # Define the relationship to Role via UserRoles
     roles = db.relationship('Role', secondary='user_roles')
     remarks = db.relationship('Remark', backref='author', lazy='dynamic')
-
-    def __init__(self, *args, **kwargs):
-        """
-        Override the constructor to derive a username from email if not otherwise specified
-        """
-        if 'username' not in kwargs:
-            kwargs['username'] = kwargs['email'].split("@")[0]
-        super().__init__(*args, **kwargs)
 
     def has_role(self, role):
         """

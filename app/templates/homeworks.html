@@ -19,9 +19,9 @@
           <a href={{ url_for('homework', hw_id=hw.id) }}>
             <h4>{{ hw.name }}</h4>
           </a>
-          Year: {{ hw.year }}
-          Number: {{ hw.ordinal_number }}
-          Number of tasks: {{ len(hw.tasks) }}
+          Year: {{ hw.year }} <br>
+          Number: {{ hw.ordinal_number }} <br>
+          Number of tasks: {{ hw.tasks.count() }} <br>
         </li>
         {% endfor %}
       </ul>
