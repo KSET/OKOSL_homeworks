@@ -1,24 +1,26 @@
 {% extends "base.html" %}
 
 {% block content %}
-<h1>Task number {{ task.task_number }}</h1>
-<h2>Homework {{ task.homework }}</h2>
-<div class="container">
-  <p>{{ task.task_text }}</p>
+<div class="container-fluid">
+  <h1>{{ homework.get_slug() }}, task {{ task.task_number }}</h1>
+  {% if task.task_text %}
+    <h3>{{ task.task_text }}</h3>
+  {% endif %}
 </div>
-<div class="container">
+<div class="container-fluid">
   <ul class="list-group">
-  	{% for solution_group in task.solution_groups %}
+  	{% for subtask in task.subtasks %}
       <li class="list-group-item">
-        <a href={{ url_for('solution_group', sg_id=solution_group.id) }}>
-          <h4>Solution group {{ solution_group.id }}</h4>
-          Text: {{ task.task_text }} TODO OVO DOVRŠIT
-          Number of solution groups: {{ len(task.solution_groups) }}
+        <a href={{ url_for('subtask', task_id=task.id, subtask_id=subtask.id) }}>
+          <h4>Subtask number {{ subtask.subtask_number }}</h4>
+          Text: {{ subtask.subtask_text }} <br>
+          Number of solution groups: {{ subtask.solution_groups.count() }} <br>
           {# this unresolved solution calculation needs testing #}
-          Number of unresolved solution groups: {{ len([group for group in task.solution_groups if group.final_score_penalty is None]) }}
+          {# Number of unresolved solution groups: {{ [group for group in subtask.solution_groups if group.final_score_percentage is None] | length }} #}
         </a>
       </li>
     {% endfor %}
   </ul>
 </div>
+
 {% endblock %}

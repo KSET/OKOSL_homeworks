@@ -17,11 +17,11 @@
         {% for hw in homeworks_by_year[year] %}
         <li class="list-group-item">
           <a href={{ url_for('homework', hw_id=hw.id) }}>
-            <h4>{{ hw.name }}</h4>
+            <h4>{{ hw.get_slug() }}</h4>
           </a>
           Year: {{ hw.year }} <br>
           Number: {{ hw.ordinal_number }} <br>
-          Number of tasks: {{ hw.tasks.count() }} <br>
+          Number of tasks: {{ hw.tasks | length }} <br>
         </li>
         {% endfor %}
       </ul>

@@ -1,17 +1,15 @@
 {% extends "base.html" %}
 
 {% block content %}
-<h1>Homework: {{ homework.name }}</h1>
+<h1>Homework: {{ homework.get_slug() }}</h1>
 <div class="container">
   <ul class="list-group">
   	{% for task in homework.tasks %}
       <li class="list-group-item">
         <a href={{ url_for('task', task_id=task.id) }}>
           <h4>Task number {{ task.task_number }}</h4>
-          Text: {{ task.task_text }}
-          Number of solution groups: {{ len(task.solution_groups) }}
-          {# this unresolved solution calculation needs testing #}
-          {# Number of unresolved solution groups: {{ len([group for group in task.solution_groups if group.final_score_percentage is None]) }} #}
+          Text: {{ task.task_text }} <br>
+          Number of subtasks: {{ task.subtasks | length }} <br>
         </a>
       </li>
     {% endfor %}

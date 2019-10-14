@@ -1,0 +1,29 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container-fluid">
+  <h1>Task {{ task.task_number }}, subtask {{ subtask.subtask_number }}</h1>
+  <h3>{{ subtask.subtask_text }}</h3>
+  <p>Subtask text: {{ subtask.subtask_text }}</p>
+  <p>Maximum points: {{ subtask.max_points }}</p>
+</div>
+<hr>
+<div class="container-fluid">
+  <ul class="list-group">
+  	{% for solution_group in subtask.solution_groups %}
+      <li class="list-group-item">
+        <a href={{ url_for('solution_group', sg_id=solution_group.id, subtask_id=subtask.id, task_id=task.id) }}>
+          <h4>Solution group {{ solution_group.id }}</h4>
+        </a>
+        Text: {{ solution_group.solutions[0].solution_text }} <br>
+        Remarks: {{ solution_group.remarks.count() }} <br>
+        {% if solution_group.final_score_percentage is none %}
+          <b>Unresolved</b>
+        {% else %}
+          Final score percentage: <b>{{ solution_group.final_score_percentage }}</b>
+        {% endif %}
+      </li>
+    {% endfor %}
+  </ul>
+</div>
+{% endblock %}
