@@ -45,7 +45,7 @@ class Task(db.Model):
     task_number = db.Column(db.Integer, nullable=False)  # the task's homework-level ordinal number
 
     # task-level note, e.g. "All subtasks pertain to the file /usr/share/dict/words"
-    task_text = db.Column(db.Text, nullable=False)
+    task_text = db.Column(db.Text, nullable=True)
 
     # filename that should exist in the repo and contain the task solution
     solution_filename = db.Column(db.Text, nullable=False)
@@ -88,35 +88,6 @@ class Subtask(db.Model):
         return f'<TaskID:{self.task_id};Task#{self.subtask_number}>'
 
 
-class SolutionGroup(db.Model):
-    """Solution Group model. Each subtask has several possible solutions, correct or otherwise.
-    However, some solutions may be syntactically different, but functionally identical
-    (e.g. ls -al and ls -la), so it makes sense to group these. This model enables it.
-    """
-
-    __tablename__ = "solution_groups"
-    id = db.Column(db.Integer, primary_key=True)
-    subtask_id = db.Column(db.Integer, db.ForeignKey("subtasks.id", ondelete="CASCADE"), nullable=False)
-
-    solutions = db.relationship("Solution", backref="solution_group", lazy="dynamic")
-    remarks = db.relationship("Remark", backref="solution_group", lazy="dynamic")
-
-    # the following fields should be filled once a final, aggregate remark is written
-    final_remark = db.Column(db.Text, nullable=True)
-    final_score_percentage = db.Column(db.Float(), nullable=True)
-
-    __table_args__ = (
-        CheckConstraint(final_score_percentage >= 0, name='check_final_score_percentage_positive'),
-        CheckConstraint(final_score_percentage <= 1.5, name='check_final_score_percentage_not_exceeded'),
-    )
-
-    def __repr__(self):
-        """
-        Override the default string representation method
-        """
-        return f'<SGID:{self.id};SubtaskID:{self.subtask_id}>'
-
-
 class Remark(db.Model):
     """Remark model. Each SolutionGroup can have a remark. Each remark consists of its text
     (a reviewer's comment on the solution) and the percentage of the maximum points it attained.
@@ -124,6 +95,7 @@ class Remark(db.Model):
     solution.)
     """
 
+    # Note: Remark must be defined before SolutionGroup because SolutionGroup references it.
     __tablename__ = "remarks"
     id = db.Column(db.Integer, primary_key=True)
     text = db.Column(db.Text, nullable=False)
@@ -132,6 +104,7 @@ class Remark(db.Model):
     date = db.Column(db.DateTime, nullable=False, default=datetime.utcnow)
 
     solution_group_id = db.Column(db.Integer, db.ForeignKey("solution_groups.id", ondelete="CASCADE"), nullable=False)
+    solution_group = db.relationship('SolutionGroup', foreign_keys=[solution_group_id], back_populates='remarks')
 
     __table_args__ = (
         CheckConstraint(score_percentage >= 0, name='check_score_percentage_positive'),
@@ -143,6 +116,30 @@ class Remark(db.Model):
         Override the default string representation method
         """
         return f'<RemarkID:{self.id};Text:{get_text_snippet(self.text)}>'
+
+
+class SolutionGroup(db.Model):
+    """Solution Group model. Each subtask has several possible solutions, correct or otherwise.
+    However, some solutions may be syntactically different, but functionally identical
+    (e.g. ls -al and ls -la), so it makes sense to group these. This model enables it.
+    """
+
+    __tablename__ = "solution_groups"
+    id = db.Column(db.Integer, primary_key=True)
+    subtask_id = db.Column(db.Integer, db.ForeignKey("subtasks.id", ondelete="CASCADE"), nullable=False)
+
+    solutions = db.relationship("Solution", backref="solution_group", lazy="dynamic")
+    remarks = db.relationship("Remark", foreign_keys=[Remark.solution_group_id], back_populates="solution_group")
+
+    # the following fields should be filled once a final, aggregate remark is written
+    final_remark_id = db.Column(db.Integer, db.ForeignKey("remarks.id", ondelete="SET NULL"), nullable=True)
+    final_remark = db.relationship("Remark", foreign_keys=[final_remark_id], post_update=True)
+
+    def __repr__(self):
+        """
+        Override the default string representation method
+        """
+        return f'<SGID:{self.id};SubtaskID:{self.subtask_id}>'
 
 
 class Solution(db.Model):
