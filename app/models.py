@@ -7,6 +7,13 @@ from sqlalchemy.ext.orderinglist import ordering_list
 
 SNIPPET_LENGTH = 20
 
+solved_homework_solution_association = db.Table(
+    "solved_homeworks_solutions",
+    db.Model.metadata,
+    db.Column("solved_homeworks_id", db.Integer, db.ForeignKey("solved_homeworks.id", ondelete="CASCADE")),
+    db.Column("solutions_id", db.Integer, db.ForeignKey("solutions.id", ondelete="CASCADE"))
+)
+
 
 def get_text_snippet(text):
     return text if len(text) < SNIPPET_LENGTH else f'{text[:SNIPPET_LENGTH - 3]}...'
@@ -158,7 +165,11 @@ class Solution(db.Model):
     solution_text = db.Column(db.Text, nullable=False, unique=False)
     solution_group_id = db.Column(db.Integer, db.ForeignKey("solution_groups.id", ondelete="CASCADE"), nullable=False)
 
-    solved_homeworks = db.relationship("SolvedHomeworkSolution", back_populates="solution")
+    solved_homeworks = db.relationship(
+        "SolvedHomework",
+        secondary=solved_homework_solution_association,
+        back_populates="solutions"
+    )
 
     def __repr__(self):
         """
@@ -196,22 +207,10 @@ class SolvedHomework(db.Model):
 
     repo_path = db.Column(db.String(255), nullable=False)
     # points = db.Column(db.Float(), nullable=True)
-    solutions = db.relationship("SolvedHomeworkSolution", back_populates="solved_homework")
-
-
-class SolvedHomeworkSolution(db.Model):
-    """
-    Association model which links solved homeworks to the solutions contained in them.
-    """
-
-    __tablename__ = "solved_homeworks_solutions"
-
-    id = db.Column(db.Integer, primary_key=True)
-    solved_homework_id = db.Column(db.Integer, db.ForeignKey("solved_homeworks.id", ondelete="CASCADE"), nullable=False)
-    solution_id = db.Column(db.Integer, db.ForeignKey("solutions.id", ondelete="CASCADE"), nullable=False)
-
-    solved_homework = db.relationship("SolvedHomework", back_populates="solutions")
-    solution = db.relationship("Solution", back_populates="solved_homeworks")
+    solutions = db.relationship(
+        "Solution",
+        secondary=solved_homework_solution_association,
+        back_populates="solved_homeworks")
 
 
 class User(db.Model, UserMixin):
