@@ -1,0 +1,61 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container-fluid">
+  <h1>Task {{ task.task_number }}, subtask {{ subtask.subtask_number }}</h1>
+  <h3>{{ subtask.subtask_text }}</h3>
+  <p>Subtask text: {{ subtask.subtask_text }}</p>
+  <p>Maximum points: {{ subtask.max_points }}</p>
+</div>
+
+<hr>
+
+<div class="container-fluid">
+  Solutions:
+  <ul class="list-group">
+  	{% for solution in solution_group.solutions %}
+      <li class="list-group-item">
+        {{ solution.solution_text }}
+        <hr>
+      </li>
+    {% endfor %}
+  </ul>
+</div>
+
+<hr>
+
+<div class="container-fluid">
+  Add remark:
+  <form action="" method="post">
+    {{ form.hidden_tag() }}
+    <p>
+      {{ form.remark_text.label.text }}: {{ form.remark_text() }}
+      {% for error in form.remark_text.errors %}
+        <span class="error">{{ error }}</span>
+      {% endfor %}
+    </p>
+    <p>
+      {{ form.remark_score_percentage.label.text }}: {{ form.remark_score_percentage() }}
+      {% for error in form.remark_score_percentage.errors %}
+        <span class="error">{{ error }}</span>
+      {% endfor %}
+    </p>
+    <p>{{ form.submit() }}</p>
+  </form>
+</div>
+
+
+<div class="container-fluid">
+  Remarks:
+  <ul class="list-group">
+    {% for remark in solution_group.remarks %}
+      <li class="list-group-item">
+        {{ remark.text }} <br>
+        Score percentage: {{ remark.score_percentage }} <br>
+        Author: {{ remark.author.username }}
+      </li>
+      <hr>
+    {% endfor %}
+  </ul>
+</div>
+{% endblock %}
