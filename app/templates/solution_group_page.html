@@ -11,7 +11,7 @@
 <hr>
 
 <div class="container-fluid">
-  Solutions:
+  <h3>Solutions:</h3>
   <ul class="list-group">
   	{% for solution in solution_group.solutions %}
       <li class="list-group-item">
@@ -25,7 +25,7 @@
 <hr>
 
 <div class="container-fluid">
-  Add remark:
+  <h3>Add remark:</h3>
   <form action="" method="post">
     {{ form.hidden_tag() }}
     <p>
@@ -46,7 +46,7 @@
 
 
 <div class="container-fluid">
-  Remarks:
+  <h3>Remarks:</h3>
   <ul class="list-group">
     {% for remark in solution_group.remarks %}
       <li class="list-group-item">
