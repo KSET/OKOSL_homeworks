@@ -6,6 +6,15 @@
   <h3>{{ subtask.subtask_text }}</h3>
   <p>Subtask text: {{ subtask.subtask_text }}</p>
   <p>Maximum points: {{ subtask.max_points }}</p>
+
+  {% if solution_group.final_remark is not none %}
+    <div class="container-fluid">
+      <h2>Final remark</h2>
+      {{ solution_group.final_remark.text }} <br>
+      Score percentage: {{ solution_group.final_remark.score_percentage }} <br>
+      Author: {{ solution_group.final_remark.author.username }}
+    </div>
+  {% endif %}
 </div>
 
 <hr>
@@ -24,23 +33,52 @@
 
 <hr>
 
+{% if solution_group.remarks | length > 2 %}
+  <div class="container-fluid">
+    {% if solution_group.final_remark is none %}
+      <h3>Add final remark:</h3>
+    {% else %}
+      <h3>Modify final remark:</h3>
+    {% endif %}
+    <form action="" method="post">
+      {{ final_remark_form.hidden_tag() }}
+      <p>
+        {{ final_remark_form.remark_text.label.text }}: {{ final_remark_form.remark_text() }}
+        {% for error in final_remark_form.remark_text.errors %}
+          <span class="error">{{ error }}</span>
+        {% endfor %}
+      </p>
+      <p>
+        {{ final_remark_form.remark_score_percentage.label.text }}: {{ final_remark_form.remark_score_percentage() }}
+        {% for error in final_remark_form.remark_score_percentage.errors %}
+          <span class="error">{{ error }}</span>
+        {% endfor %}
+      </p>
+      <p>{{ final_remark_form.submit_final_remark() }}</p>
+    </form>
+  </div>
+
+  <hr>
+{% endif %}
+
+
 <div class="container-fluid">
   <h3>Add remark:</h3>
   <form action="" method="post">
-    {{ form.hidden_tag() }}
+    {{ remark_form.hidden_tag() }}
     <p>
-      {{ form.remark_text.label.text }}: {{ form.remark_text() }}
-      {% for error in form.remark_text.errors %}
+      {{ remark_form.remark_text.label.text }}: {{ remark_form.remark_text() }}
+      {% for error in remark_form.remark_text.errors %}
         <span class="error">{{ error }}</span>
       {% endfor %}
     </p>
     <p>
-      {{ form.remark_score_percentage.label.text }}: {{ form.remark_score_percentage() }}
-      {% for error in form.remark_score_percentage.errors %}
+      {{ remark_form.remark_score_percentage.label.text }}: {{ remark_form.remark_score_percentage() }}
+      {% for error in remark_form.remark_score_percentage.errors %}
         <span class="error">{{ error }}</span>
       {% endfor %}
     </p>
-    <p>{{ form.submit() }}</p>
+    <p>{{ remark_form.submit_remark() }}</p>
   </form>
 </div>
 
