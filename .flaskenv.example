@@ -8,6 +8,7 @@ DB_NAME=okosl
 
 GITEA_HOST=edu.kset.org
 GITEA_TOKEN=<gitea_api_token>
+GITEA_API_PAGE_SIZE=50
 REPOS_ROOT=/opt/okosl_repos
 
 SECRET_KEY=

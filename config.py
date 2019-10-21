@@ -31,9 +31,10 @@ class Config(object):
                                                                    DB_NAME)
     # Git settings
     GITEA_HOST = os.environ.get("GITEA_HOST")
-    GITEA_API_URL = 'https://'+GITEA_HOST+'/api/v1'
+    GITEA_API_URL = 'http://'+GITEA_HOST+'/api/v1'
     GITEA_TOKEN = os.environ.get("GITEA_TOKEN")
     GITEA_API_HEADERS = {'Authorization': 'token '+GITEA_TOKEN}
+    GITEA_API_PAGE_SIZE = os.environ.get("GITEA_API_PAGE_SIZE", 50)
     REPOS_ROOT = os.environ.get("REPOS_ROOT")
 
     # Flask-User settings - see https://flask-user.readthedocs.io/en/v0.6/customization.html
