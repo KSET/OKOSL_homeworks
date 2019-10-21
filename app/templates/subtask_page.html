@@ -16,11 +16,11 @@
           <h4>Solution group {{ solution_group.id }}</h4>
         </a>
         Text: {{ solution_group.solutions[0].solution_text }} <br>
-        Remarks: {{ solution_group.remarks.count() }} <br>
-        {% if solution_group.final_score_percentage is none %}
+        Remarks: {{ solution_group.remarks | length }} <br>
+        {% if solution_group.final_remark is none %}
           <b>Unresolved</b>
         {% else %}
-          Final score percentage: <b>{{ solution_group.final_score_percentage }}</b>
+          Final score percentage: <b>{{ solution_group.final_remark.score_percentage }}</b>
         {% endif %}
       </li>
     {% endfor %}
