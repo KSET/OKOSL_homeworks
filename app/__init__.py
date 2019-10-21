@@ -14,9 +14,9 @@ app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 db = SQLAlchemy(app)
 migrate = Migrate(app, db)
 
-from .models import User, Role, Homework, Task, SolutionGroup, Solution, Remark, UserRoles # noqa
+from .models import User, Role, Homework, Task, Subtask, SolutionGroup, Solution, Remark, UserRoles, Student, SolvedHomework # noqa
 
-model_list = [User, Role, Homework, Task, SolutionGroup, Solution, Remark, UserRoles]
+model_list = [User, Role, Homework, Task, Subtask, SolutionGroup, Solution, Remark, UserRoles, Student, SolvedHomework]
 
 user_manager = UserManager(app, db, User)
 
