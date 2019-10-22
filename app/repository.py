@@ -7,9 +7,10 @@ from app import app, db
 from app.models import *
 from sqlalchemy.orm.exc import NoResultFound
 
-class Repository(SolvedHomework):
-
+class Repository():
+    
     def clone_n_parse(homework):
+        '''Clone all repositories for given homework and parse all solution files for each repository'''
         name = homework.get_slug()
         repos_root = Config.REPOS_ROOT+'/'+name
         try:
@@ -24,6 +25,8 @@ class Repository(SolvedHomework):
 
 
     def search(name):
+        '''Searches for gitea repositories with given name.
+        Returns a list of dictionaries representing repositories as json objects from gitea API'''
         repos = []
 
         response_len = Config.GITEA_API_PAGE_SIZE
@@ -44,6 +47,14 @@ class Repository(SolvedHomework):
 
  
     def clone(repos, repos_root, homework):
+        '''Clones given repositories to the given repos_root directory.
+        Also makes, stores and returns their SolvedHomework instances.
+
+        Parameters:
+        repos (list): List of json repository objects from gitea API
+        repos_root (string): Path for storing the repositories
+        homework (Homework): Homework instance. Needed for creating the SolvedHomework instances.
+        '''
         repositories = []
         for repo in repos:
             try:
@@ -79,6 +90,7 @@ class Repository(SolvedHomework):
 
     
     def parse(sh):
+        '''Parses all solution files of given SolvedHomework and createas a Solution for each Subtask'''
         if len(sh.solutions) > 0:
             return
 
@@ -101,6 +113,15 @@ class Repository(SolvedHomework):
 
     
     def parse_file(filename, subtasks_count):
+        '''Parses a single solution file.
+
+        Parameters:
+        filename (string): Path to the solution file
+        subtasks_count (int): Number of subtasks in the given solution file
+
+        Returns:
+        list:List of solution text strings
+        '''
         try:
             with open(filename, 'r') as f:
                 lines = list(filter(None,[x.rstrip() for x in f.readlines()]))
