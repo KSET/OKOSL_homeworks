@@ -41,7 +41,18 @@
       </div>
     </nav>
     {% endblock %}
+
+    {% block crumbs %}
+    <div class="navbar navbar-default">
+      {%- for crumb in breadcrumbs -%}
+        <a href="{{ crumb.url }}">{{ crumb.text }}</a>
+        {{ '/' if not loop.last }}
+      {%- endfor -%}
+    </div>
+    {% endblock %}
+
     <hr class="no-margins"/>
+
     {% block flash_messages %}
       {% with messages = get_flashed_messages(with_categories=true) %}
         {% if messages %}

@@ -6,7 +6,7 @@
   <ul class="list-group">
   	{% for task in homework.tasks %}
       <li class="list-group-item">
-        <a href={{ url_for('task', task_id=task.id) }}>
+        <a href={{ url_for('task', task_id=task.id, hw_id=homework.id) }}>
           <h4>Task number {{ task.task_number }}</h4>
           Text: {{ task.task_text }} <br>
           Number of subtasks: {{ task.subtasks | length }} <br>

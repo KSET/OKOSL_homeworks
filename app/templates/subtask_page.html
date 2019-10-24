@@ -12,7 +12,7 @@
   <ul class="list-group">
   	{% for solution_group in subtask.solution_groups %}
       <li class="list-group-item">
-        <a href={{ url_for('solution_group', sg_id=solution_group.id, subtask_id=subtask.id, task_id=task.id) }}>
+        <a href={{ url_for('solution_group', solution_group_id=solution_group.id, subtask_id=subtask.id, task_id=task.id, hw_id=homework.id) }}>
           <h4>Solution group {{ solution_group.id }}</h4>
         </a>
         Text: {{ solution_group.solutions[0].solution_text }} <br>

@@ -25,29 +25,31 @@ def homework(hw_id):
     return render_template('homework_page.html', homework=homework)
 
 
-@app.route('/tasks/<task_id>')
+@app.route('/homeworks/<hw_id>/tasks/<task_id>')
 @login_required
-def task(task_id):
+def task(task_id, hw_id):
     task = Task.query.get(task_id)
-    homework = Homework.query.get(task.homework_id)
+    homework = Homework.query.get(hw_id)
     return render_template('task_page.html', task=task, homework=homework)
 
 
-@app.route('/tasks/<task_id>/subtask_<subtask_id>')
+@app.route('/homeworks/<hw_id>tasks/<task_id>/subtask_<subtask_id>')
 @login_required
-def subtask(task_id, subtask_id):
+def subtask(subtask_id, task_id, hw_id):
     subtask = Subtask.query.get(subtask_id)
     task = Task.query.get(task_id)
     homework = Homework.query.get(task.homework_id)
     return render_template('subtask_page.html', subtask=subtask, task=task, homework=homework)
 
 
-@app.route('/tasks/<task_id>/subtask_<subtask_id>/solution_group_<sg_id>', methods=['GET', 'POST'])
+@app.route('/homeworks/<hw_id>tasks/<task_id>/subtask_<subtask_id>/solution_group_<solution_group_id>', methods=['GET', 'POST'])
 @login_required
-def solution_group(task_id, subtask_id, sg_id):
-    solution_group = SolutionGroup.query.get(sg_id)
+def solution_group(solution_group_id, subtask_id, task_id, hw_id):
+    solution_group = SolutionGroup.query.get(solution_group_id)
     subtask = Subtask.query.get(subtask_id)
     task = Task.query.get(task_id)
+    homework = Homework.query.get(hw_id)
+
     remark_form = RemarkForm()
     final_remark_form = FinalRemarkForm()
     author = current_user
@@ -87,51 +89,6 @@ def solution_group(task_id, subtask_id, sg_id):
                            task=task,
                            homework=homework
                            )
-
-
-# @app.route('/tasks/<task_id>/subtask_<subtask_id>/solution_group_<sg_id>', methods=['POST'])
-# @login_required
-# def add_remark(task_id, subtask_id, sg_id):
-#     flash("Adding remark")
-#     print("Adding remark")
-#     form = RemarkForm()
-#     author = current_user
-
-#     if form.validate_on_submit():
-#         remark_text = form.remark_text.data
-#         remark_score_percentage = form.remark_score_percentage.data
-#         remark = Remark(author=author,
-#                         text=remark_text,
-#                         score_percentage=remark_score_percentage,
-#                         solution_group=solution_group
-#                         )
-#         db.session.add(remark)
-#         db.session.commit()
-#         flash("Remark added!", 'success')
-#     return redirect(url_for('solution_group', task_id=task_id, subtask_id=subtask_id, sg_id=sg_id))
-
-
-# @app.route('/tasks/<task_id>/subtask_<subtask_id>/solution_group_<sg_id>', methods=['POST'])
-# @login_required
-# def add_final_remark(task_id, subtask_id, sg_id):
-#     flash("Adding final remark")
-#     print("Adding final remark")
-#     form = FinalRemarkForm()
-#     author = current_user
-
-#     if form.validate_on_submit():
-#         remark_text = form.remark_text.data
-#         remark_score_percentage = form.remark_score_percentage.data
-#         remark = Remark(author=author,
-#                         text=remark_text,
-#                         score_percentage=remark_score_percentage,
-#                         solution_group=solution_group
-#                         )
-#         solution_group.final_remark = remark
-#         db.session.add(solution_group)
-#         db.session.commit()
-#         flash("Final remark added!", 'success')
-#     return redirect(url_for('solution_group', task_id=task_id, subtask_id=subtask_id, sg_id=sg_id))
 
 
 @app.route('/admin')
