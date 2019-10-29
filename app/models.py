@@ -36,6 +36,14 @@ class Homework(db.Model):
     def get_slug(self):
         return f"{self.activity}_{self.ordinal_number}-{self.year}"
 
+    def has_unresolved(self):
+        for task in self.tasks:
+            for subtask in task.subtasks:
+                for solution_group in subtask.solution_groups:
+                    if solution_group.final_remark is None:
+                        return True
+        return False
+
     def __repr__(self):
         """
         Override the default string representation method

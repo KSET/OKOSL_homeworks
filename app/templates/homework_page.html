@@ -1,7 +1,18 @@
 {% extends "base.html" %}
 
 {% block content %}
-<h1>Homework: {{ homework.get_slug() }}</h1>
+<div class="container-fluid">
+  <h1>Homework: {{ homework.get_slug() }}</h1>
+  <button class="btn btn-primary" id={{ homework.id }} onclick="pull_solutions(this)">Pull Solutions</button>
+  {% if homework.has_unresolved() %}
+    <button class="btn btn-secondary" id={{ homework.id }} disabled>Push Remarks</button>
+  {% else %}
+    <button class="btn btn-secondary" id={{ homework.id }} onclick="push_remarks(this)">Push Remarks</button>
+  {% endif %}
+  <div class="well well-sm" id="ajax-message-well" style="display: none">
+  </div>
+</div>
+
 <div class="container">
   <ul class="list-group">
   	{% for task in homework.tasks %}

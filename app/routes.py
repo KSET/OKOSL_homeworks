@@ -1,8 +1,9 @@
 from app import app, db
-from flask import render_template  # , flash
+from flask import render_template, jsonify  # , flash
 from flask_user import login_required, roles_required, current_user
 from .models import Homework, Task, Subtask, SolutionGroup, Remark  # , Solution, Remark
 from .forms import RemarkForm, FinalRemarkForm
+from .repository import Repository
 # import datetime
 
 
@@ -22,7 +23,7 @@ def homeworks():
 @login_required
 def homework(hw_id):
     homework = Homework.query.get(hw_id)
-    return render_template('homework_page.html', homework=homework)
+    return render_template('homework_page.html', homework=homework, Repository=Repository)
 
 
 @app.route('/homeworks/<hw_id>/tasks/<task_id>')
@@ -89,6 +90,23 @@ def solution_group(solution_group_id, subtask_id, task_id, hw_id):
                            task=task,
                            homework=homework
                            )
+
+
+@app.route('/homeworks/<hw_id>/pull_solutions')
+@login_required
+def pull_solutions(hw_id):
+    homework = Homework.query.get(hw_id)
+    Repository.clone_n_parse(homework)
+    return jsonify({'success': True})
+
+
+@app.route('/homeworks/<hw_id>/push_remarks')
+@login_required
+def push_remarks(hw_id):
+    homework = Homework.query.get(hw_id)
+    # Repository.push_remarks(homework)
+    print(f"Homework: {homework} - pushing remarks")
+    return jsonify({'success': True})
 
 
 @app.route('/admin')
