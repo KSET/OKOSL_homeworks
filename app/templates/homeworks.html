@@ -3,7 +3,9 @@
 {% block content %}
   <h1>Homeworks</h1>
   <div class="container">
-    <select id="homeworksByYear">
+    Select year: 
+    <select id="homeworks_by_year" onChange='change_year({{ years | tojson }})'>
+      <option value="all" selected>All</option>
       {% for year in years %}
         <option value="{{ year }}">{{ year }}</option>
       {% endfor %}
@@ -13,36 +15,24 @@
   <div class="container">
     {% for year in years %}
     <div class="container" id="hw-{{ year }}">
+      <h3>{{ year }}</h3>
       <ul class="list-group">
         {% for hw in homeworks_by_year[year] %}
         <li class="list-group-item">
-          <a href={{ url_for('homework', hw_id=hw.id) }}>
-            <h4>{{ hw.get_slug() }}</h4>
-          </a>
-          Year: {{ hw.year }} <br>
-          Number: {{ hw.ordinal_number }} <br>
-          Number of tasks: {{ hw.tasks | length }} <br>
+          <div class="panel panel-default">
+            <div class="panel-heading">
+              <a href={{ url_for('homework', hw_id=hw.id) }}>
+                <h4>{{ hw.get_slug() }}</h4>
+              </a>
+            </div>
+            <div class="panel-body">
+              Ordinal number: {{ hw.ordinal_number }} <br>
+              Number of tasks: {{ hw.tasks | length }} <br>
+            </div>
+          </div>
         </li>
         {% endfor %}
       </ul>
     </div>
     {% endfor %}
-
-
-
-<!-- <script>
-function changeYear() {
-  var selected_year = document.getElementById("homeworksByYear").value;
-
-  var x = document.getElementById("myDIV");
-  if (x.style.display === "none") {
-    x.style.display = "block";
-  } else {
-    x.style.display = "none";
-  }
-}
-</script>
- -->
-
-    
 {% endblock %}

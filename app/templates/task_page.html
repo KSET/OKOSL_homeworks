@@ -11,13 +11,19 @@
   <ul class="list-group">
   	{% for subtask in task.subtasks %}
       <li class="list-group-item">
-        <a href={{ url_for('subtask', subtask_id=subtask.id, task_id=task.id, hw_id=homework.id) }}>
-          <h4>Subtask number {{ subtask.subtask_number }}</h4>
-          Text: {{ subtask.subtask_text }} <br>
-          Number of solution groups: {{ subtask.solution_groups.count() }} <br>
-          {# this unresolved solution calculation needs testing #}
-          {# Number of unresolved solution groups: {{ [group for group in subtask.solution_groups if group.final_score_percentage is None] | length }} #}
-        </a>
+        <div class="panel panel-default">
+          <div class="panel-heading">
+            <a href={{ url_for('subtask', subtask_id=subtask.id, task_id=task.id, hw_id=homework.id) }}>
+              <h4>Subtask number {{ subtask.subtask_number }}</h4>
+            </a>
+          </div>
+          <div class="panel-body">
+            Text: {{ subtask.subtask_text }} <br>
+            Number of solution groups: {{ subtask.solution_groups.count() }} <br>
+            {# this unresolved solution calculation needs testing #}
+            {# Number of unresolved solution groups: {{ [group for group in subtask.solution_groups if group.final_score_percentage is None] | length }} #}
+          </div>
+        </div>
       </li>
     {% endfor %}
   </ul>

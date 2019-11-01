@@ -17,14 +17,21 @@
   <ul class="list-group">
   	{% for task in homework.tasks %}
       <li class="list-group-item">
-        <a href={{ url_for('task', task_id=task.id, hw_id=homework.id) }}>
-          <h4>Task number {{ task.task_number }}</h4>
-          Text: {{ task.task_text }} <br>
-          Number of subtasks: {{ task.subtasks | length }} <br>
-        </a>
+        <div class="panel panel-default">
+          <div class="panel-heading">
+            <a href={{ url_for('task', task_id=task.id, hw_id=homework.id) }}>
+              <h4>Task number {{ task.task_number }}</h4>
+            </a>
+          </div>
+          <div class="panel-body">
+            Text: {{ task.task_text }} <br>
+            Number of subtasks: {{ task.subtasks | length }} <br>
+          </div>
+        </div>
       </li>
     {% endfor %}
   </ul>
 </div>
+
 
 {% endblock %}
