@@ -1,7 +1,7 @@
 from app import app, db
-from flask import render_template, jsonify  # , flash
+from flask import render_template, jsonify, request  # , flash
 from flask_user import login_required, roles_required, current_user
-from .models import Homework, Task, Subtask, SolutionGroup, Remark  # , Solution, Remark
+from .models import Homework, Task, Subtask, SolutionGroup, Solution, Remark  # , Solution, Remark
 from .forms import RemarkForm, FinalRemarkForm
 from .repository import Repository
 # import datetime
@@ -14,7 +14,7 @@ NUMBER_OF_ARTICLES = 3
 @app.route('/homeworks')
 @login_required
 def homeworks():
-    years = sorted([homework.year for homework in Homework.query.distinct(Homework.year)])
+    years = sorted([homework.year for homework in Homework.query.distinct(Homework.year)], reverse=True)
     homeworks_by_year = {year: list(Homework.query.filter(Homework.year == year)) for year in years}
     return render_template('homeworks.html', years=years, homeworks_by_year=homeworks_by_year)
 
@@ -92,20 +92,58 @@ def solution_group(solution_group_id, subtask_id, task_id, hw_id):
                            )
 
 
-@app.route('/homeworks/<hw_id>/pull_solutions')
+@app.route('/ajax/<hw_id>/pull_solutions')
 @login_required
 def pull_solutions(hw_id):
     homework = Homework.query.get(hw_id)
-    Repository.clone_n_parse(homework)
+    try:
+        Repository.clone_n_parse(homework)
+    except Exception as e:
+        return jsonify({'success': False, 'error': e})
+
     return jsonify({'success': True})
 
 
-@app.route('/homeworks/<hw_id>/push_remarks')
+@app.route('/ajax/<hw_id>/push_remarks')
 @login_required
 def push_remarks(hw_id):
     homework = Homework.query.get(hw_id)
-    # Repository.push_remarks(homework)
-    print(f"Homework: {homework} - pushing remarks")
+    try:
+        # Repository.push_remarks(homework)
+        pass
+    except Exception as e:
+        return jsonify({'success': False, 'error': e})
+
+    return jsonify({'success': True})
+
+
+@app.route('/ajax/move_solution', methods=['POST'])
+@login_required
+def move_solution():
+    solution = Solution.query.get(int(request.json['solution_id']))
+    source_sg = SolutionGroup.query.get(int(request.json['source_sg_id']))
+    target_sg = SolutionGroup.query.get(int(request.json['target_sg_id']))
+    subtask = source_sg.subtask
+
+    source_sg.solutions.remove(solution)
+    TODO: preštekancija solutiona na drugi SG
+
+    if target_sg is None:
+        target_sg = SolutionGroup(subtask=subtask)
+    target_sg.solutions.append(solution)
+
+    if len(source_sg.solutions) == 0:
+        for remark in source_sg.remarks:
+            target_sg.remarks.append(remark)
+        db.session.delete(source_sg)
+
+    db.session.add(target_sg)
+    db.session.add(source_sg)
+    db.session.add(solution)
+    try:
+        db.session.commit()
+    except Exception as e:
+        return jsonify({'success': False, 'error': e})
     return jsonify({'success': True})
 
 

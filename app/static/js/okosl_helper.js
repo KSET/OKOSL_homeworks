@@ -20,12 +20,33 @@ function flash_message(msg) {
   flash_well.style.display = 'inline'
 }
 
+
+function change_year(years) {
+  console.log('test')
+  var selected_year = document.getElementById("homeworks_by_year").value;
+  years.forEach(function(year) {
+    var year_div = document.getElementById("hw-" + year);
+    console.log("Year: " + year + "  --  SelYear: " + selected_year)
+    console.log(year == selected_year)
+    if (selected_year == 'all') {
+      year_div.style.display = "block";
+    }
+    else if (year == selected_year) {
+      year_div.style.display = "block";
+    }
+    else {
+      year_div.style.display = "none";
+    }
+  });
+}
+
+
 var csrftoken = getCookie('csrftoken');
 
 function pull_solutions(button) {
   var xhr = new XMLHttpRequest();
   var homework_id = button.id;
-  xhr.open('GET', '/homeworks/' + homework_id + '/pull_solutions');
+  xhr.open('GET', '/ajax/' + homework_id + '/pull_solutions');
 
   xhr.setRequestHeader('X-CSRFToken', csrftoken);
   xhr.onload = function() {
@@ -33,6 +54,9 @@ function pull_solutions(button) {
       var data = JSON.parse(xhr.responseText);
       if (data['success'] == true) {
         flash_message("Homework solutions pulled from Gitea")
+      }
+      else {
+        flash_message("Error while pulling solutions: " + data['error'])
       }
     }
   }
@@ -43,7 +67,7 @@ function pull_solutions(button) {
 function push_remarks(button) {
   var xhr = new XMLHttpRequest();
   var homework_id = button.id;
-  xhr.open('GET', '/homeworks/' + homework_id + '/push_remarks');
+  xhr.open('GET', '/ajax/' + homework_id + '/push_remarks');
 
   xhr.setRequestHeader('X-CSRFToken', csrftoken);
   xhr.onload = function() {
@@ -51,6 +75,9 @@ function push_remarks(button) {
       var data = JSON.parse(xhr.responseText);
       if (data['success'] == true) {
         flash_message("Homework solution remarks pushed to Gitea")
+      }
+      else {
+        flash_message("Error while pushing remarks: " + data['error'])
       }
     }
   }
