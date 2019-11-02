@@ -125,20 +125,21 @@ def move_solution():
     target_sg = SolutionGroup.query.get(int(request.json['target_sg_id']))
     subtask = source_sg.subtask
 
-    source_sg.solutions.remove(solution)
-    TODO: preštekancija solutiona na drugi SG
-
     if target_sg is None:
         target_sg = SolutionGroup(subtask=subtask)
-    target_sg.solutions.append(solution)
+        db.session.add(target_sg)
+        db.session.commit()
 
-    if len(source_sg.solutions) == 0:
+    solution.solution_group_id = target_sg.id
+
+    if source_sg.solutions.count() == 0:
         for remark in source_sg.remarks:
-            target_sg.remarks.append(remark)
+            remark.solution_group_id = target_sg.id
         db.session.delete(source_sg)
+    else:
+        db.session.add(source_sg)
 
     db.session.add(target_sg)
-    db.session.add(source_sg)
     db.session.add(solution)
     try:
         db.session.commit()
