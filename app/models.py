@@ -130,7 +130,7 @@ class Remark(db.Model):
         """
         Override the default string representation method
         """
-        return f'<RemarkID:{self.id};Text:{get_text_snippet(self.text)}>'
+        return f'<RemarkID:{self.id};SGID:{self.solution_group_id};Text:{get_text_snippet(self.text)}>'
 
 
 class SolutionGroup(db.Model):
