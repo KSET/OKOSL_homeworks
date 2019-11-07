@@ -34,7 +34,7 @@ def task(task_id, hw_id):
     return render_template('task_page.html', task=task, homework=homework)
 
 
-@app.route('/homeworks/<hw_id>tasks/<task_id>/subtask_<subtask_id>')
+@app.route('/homeworks/<hw_id>/tasks/<task_id>/subtask_<subtask_id>')
 @login_required
 def subtask(subtask_id, task_id, hw_id):
     subtask = Subtask.query.get(subtask_id)
@@ -43,7 +43,7 @@ def subtask(subtask_id, task_id, hw_id):
     return render_template('subtask_page.html', subtask=subtask, task=task, homework=homework)
 
 
-@app.route('/homeworks/<hw_id>tasks/<task_id>/subtask_<subtask_id>/solution_group_<solution_group_id>', methods=['GET', 'POST'])
+@app.route('/homeworks/<hw_id>/tasks/<task_id>/subtask_<subtask_id>/solution_group_<solution_group_id>', methods=['GET', 'POST'])
 @login_required
 def solution_group(solution_group_id, subtask_id, task_id, hw_id):
     solution_group = SolutionGroup.query.get(solution_group_id)
@@ -122,29 +122,37 @@ def push_remarks(hw_id):
 def move_solution():
     solution = Solution.query.get(int(request.json['solution_id']))
     source_sg = SolutionGroup.query.get(int(request.json['source_sg_id']))
-    target_sg = SolutionGroup.query.get(int(request.json['target_sg_id']))
+    target_sg = SolutionGroup.query.get(int(request.json['target_sg_id'])) if 'target_sg_id' in request.json else None
     subtask = source_sg.subtask
 
     if target_sg is None:
         target_sg = SolutionGroup(subtask=subtask)
         db.session.add(target_sg)
-        db.session.commit()
-
+        db.session.flush()
     solution.solution_group_id = target_sg.id
 
     if source_sg.solutions.count() == 0:
-        for remark in source_sg.remarks:
+        aux_remarks = [remark for remark in source_sg.remarks]
+        for remark in aux_remarks:
             remark.solution_group_id = target_sg.id
+            target_sg.remarks.append(remark)  # this also automatically removes the remark from source_sg.remarks
+            db.session.add(remark)
+
+        db.session.flush()  # changes on remarks have to be committed before deleting source_sg for some reason
+        # this is anti-ACID and needs to be fixđed properly
+        db.session.add(target_sg)
+        db.session.add(solution)
         db.session.delete(source_sg)
     else:
+        db.session.add(target_sg)
+        db.session.add(solution)
         db.session.add(source_sg)
 
-    db.session.add(target_sg)
-    db.session.add(solution)
     try:
         db.session.commit()
     except Exception as e:
-        return jsonify({'success': False, 'error': e})
+        print(e)
+        return jsonify({'success': False})
     return jsonify({'success': True})
 
 
