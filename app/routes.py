@@ -132,22 +132,21 @@ def move_solution():
     solution.solution_group_id = target_sg.id
 
     if source_sg.solutions.count() == 0:
-        aux_remarks = [remark for remark in source_sg.remarks]
-        for remark in aux_remarks:
-            remark.solution_group_id = target_sg.id
-            target_sg.remarks.append(remark)  # this also automatically removes the remark from source_sg.remarks
-            db.session.add(remark)
-
-        db.session.flush()  # changes on remarks have to be committed before deleting source_sg for some reason
-        # this is anti-ACID and needs to be fixđed properly
-        db.session.add(target_sg)
-        db.session.add(solution)
+        for remark in source_sg.remarks:
+            target_sg.remarks.append(Remark(text=remark.text,
+                                            score_percentage=remark.score_percentage,
+                                            author=remark.author,
+                                            date=remark.date,
+                                            solution_group=target_sg
+                                            )
+                                     )
+            db.session.delete(remark)
         db.session.delete(source_sg)
     else:
-        db.session.add(target_sg)
-        db.session.add(solution)
         db.session.add(source_sg)
 
+    db.session.add(target_sg)
+    db.session.add(solution)
     try:
         db.session.commit()
     except Exception as e:
