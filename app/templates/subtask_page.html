@@ -46,9 +46,14 @@
             </div>
             <div class="collapse" id="remarks-{{ solution_group.id }}">
               <h4>Remarks:</h4>
-              {% for remark in solution_group.remarks %}
-                {{ remark.text }} <hr>
-              {% endfor %}
+              <ul class="list-group" id="remark_list-{{ solution_group.id }}">
+                {% for remark in solution_group.remarks %}
+                  <li class="list-group-item" id="remark-{{ remark.id }}">
+                    <p>{{ remark.text }}</p>
+                    <hr>
+                  </li>
+                {% endfor %}
+              </ul>
               <br>
             </div>
             Number of solutions: {{ solution_group.solutions.count() }} <br>
