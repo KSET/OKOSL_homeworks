@@ -124,11 +124,13 @@ def move_solution():
     source_sg = SolutionGroup.query.get(int(request.json['source_sg_id']))
     target_sg = SolutionGroup.query.get(int(request.json['target_sg_id'])) if 'target_sg_id' in request.json else None
     subtask = source_sg.subtask
+    messages = {}
 
     if target_sg is None:
         target_sg = SolutionGroup(subtask=subtask)
         db.session.add(target_sg)
         db.session.flush()
+        messages['target_added'] = True
     solution.solution_group_id = target_sg.id
 
     if source_sg.solutions.count() == 0:
@@ -142,6 +144,7 @@ def move_solution():
                                      )
             db.session.delete(remark)
         db.session.delete(source_sg)
+        messages['source_removed'] = True
     else:
         db.session.add(source_sg)
 
@@ -151,8 +154,11 @@ def move_solution():
         db.session.commit()
     except Exception as e:
         print(e)
+        messages['success'] = False
+        messages['error'] = str(e)
         return jsonify({'success': False})
-    return jsonify({'success': True})
+    messages['success'] = True
+    return jsonify(messages)
 
 
 @app.route('/admin')

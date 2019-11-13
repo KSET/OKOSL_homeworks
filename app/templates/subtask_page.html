@@ -12,9 +12,9 @@
 </div>
 <hr>
 <div class="container-fluid">
-  <ul class="list-group">
+  <ul class="list-group" id="solution-groups-list">
   	{% for solution_group in subtask.solution_groups %}
-      <li class="list-group-item">
+      <li class="list-group-item" id="solution-group-{{ solution_group.id }}">
         <div class="panel panel-default">
           <div class="panel-heading">
             <div class="row">
@@ -46,7 +46,7 @@
             </div>
             <div class="collapse" id="remarks-{{ solution_group.id }}">
               <h4>Remarks:</h4>
-              <ul class="list-group" id="remark_list-{{ solution_group.id }}">
+              <ul class="list-group" id="remark-list-{{ solution_group.id }}">
                 {% for remark in solution_group.remarks %}
                   <li class="list-group-item" id="remark-{{ remark.id }}">
                     <p>{{ remark.text }}</p>

@@ -22,6 +22,27 @@ function move_solution(source_sg_id, target_sg_id, solution_li) {
 			var data = JSON.parse(xhr.responseText);
 			if (data['success'] == true) {
 				flash_message("Solution moved");
+				if (data['target_added'] == true) {
+					console.log("Target added!")
+					flash_message("Target SG added!");
+					/*var solution_groups_ul = document.getElementById("solution-groups-list")
+					solution_groups_ul.appendChild(document.)*/
+				}
+				if (data['source_removed'] == true) {
+					console.log("Source removed!")
+					flash_message("Source SG removed");
+					var sg_li = document.getElementById("solution-group-" + source_sg_id)
+					// var source_remarks_div = document.getElementById("remarks-" + source_sg_id)
+					var source_remarks_ul = document.getElementById("remark-list-" + source_sg_id)
+					var target_remarks_ul = document.getElementById("remark-list-" + target_sg_id)
+
+					var remarks = source_remarks_ul.getElementsByTagName("li");
+					for (var i = 0; i < remarks.length; ++i) {
+						target_remarks_ul.appendChild(remarks[i])
+					}
+
+					sg_li.style.display = 'none'
+				}
 			}
 			else {
 				flash_message("Error while pulling solutions: " + data['error'])
