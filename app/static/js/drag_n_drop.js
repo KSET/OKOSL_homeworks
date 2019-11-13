@@ -6,6 +6,23 @@ function allow_drop(ev) {
 	ev.preventDefault();
 }
 
+function add_solution_group(sg_id) {
+	var xhr = new XMLHttpRequest();
+	var params = {
+		"sg_id" : sg_id,
+	};
+	xhr.open('POST', '/ajax/add_solution_group');
+	xhr.setRequestHeader('Content-Type', 'application/json; charset=utf-8');
+	xhr.onload = function() {
+		if (xhr.status === 200) {
+			var data = JSON.parse(xhr.responseText);
+			var sg_list_ul = document.getElementById("solution-groups-list")
+			sg_list_ul.insertAdjacentHTML("beforeend", data['sg_html']);
+		}
+	}
+	xhr.send(JSON.stringify(params))
+}
+
 function move_solution(source_sg_id, target_sg_id, solution_li) {
 	var xhr = new XMLHttpRequest();
 	var solution_id = solution_li.id.split('-')[1]
@@ -23,10 +40,11 @@ function move_solution(source_sg_id, target_sg_id, solution_li) {
 			if (data['success'] == true) {
 				flash_message("Solution moved");
 				if (data['target_added'] == true) {
-					console.log("Target added!")
+					console.log("Target added!");
 					flash_message("Target SG added!");
-					/*var solution_groups_ul = document.getElementById("solution-groups-list")
-					solution_groups_ul.appendChild(document.)*/
+					target_sg_id = data['target_sg_id'];
+					add_solution_group(target_sg_id);
+					solution_li.style.display = 'none';
 				}
 				if (data['source_removed'] == true) {
 					console.log("Source removed!")
@@ -66,9 +84,13 @@ function drop_solution(ev) {
 	while (target_sg_ul.tagName != 'UL'){
 		target_sg_ul = target_sg_ul.parentNode;
 	}
-	var target_sg_id = target_sg_ul.id.split('-')[1];
+	if (target_sg_ul.id.match("solution_list-[0-9]+")) {
+		var target_sg_id = target_sg_ul.id.split('-')[1];
+	}
+	else {
+		var target_sg_id = null
+	}
 
 	move_solution(source_sg_id, target_sg_id, solution_li)
 	target_sg_ul.appendChild(solution_li);
 }
-

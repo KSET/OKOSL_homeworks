@@ -10,6 +10,21 @@ from .repository import Repository
 NUMBER_OF_ARTICLES = 3
 
 
+def render_solution_group(sg_id):
+    solution_group = SolutionGroup.query.get(sg_id)
+    subtask = solution_group.subtask
+    task = subtask.task
+    homework = task.homework
+    return render_template('solution_group_list_item.html',
+                           solution_group=solution_group,
+                           subtask=subtask,
+                           task=task,
+                           homework=homework)
+
+
+app.jinja_env.globals.update(render_solution_group=render_solution_group)
+
+
 @app.route('/')
 @app.route('/homeworks')
 @login_required
@@ -122,7 +137,10 @@ def push_remarks(hw_id):
 def move_solution():
     solution = Solution.query.get(int(request.json['solution_id']))
     source_sg = SolutionGroup.query.get(int(request.json['source_sg_id']))
-    target_sg = SolutionGroup.query.get(int(request.json['target_sg_id'])) if 'target_sg_id' in request.json else None
+    try:
+        target_sg = SolutionGroup.query.get(int(request.json['target_sg_id']))
+    except TypeError:
+        target_sg = None
     subtask = source_sg.subtask
     messages = {}
 
@@ -131,6 +149,7 @@ def move_solution():
         db.session.add(target_sg)
         db.session.flush()
         messages['target_added'] = True
+        messages['target_sg_id'] = target_sg.id
     solution.solution_group_id = target_sg.id
 
     if source_sg.solutions.count() == 0:
@@ -159,6 +178,14 @@ def move_solution():
         return jsonify({'success': False})
     messages['success'] = True
     return jsonify(messages)
+
+
+@app.route('/ajax/add_solution_group', methods=['POST'])
+@login_required
+def add_solution_group():
+    sg_id = int(request.json['sg_id'])
+    html = render_solution_group(sg_id)
+    return jsonify({'sg_html': html})
 
 
 @app.route('/admin')

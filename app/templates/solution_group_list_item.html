@@ -1,0 +1,52 @@
+<li class="list-group-item" id="solution-group-{{ solution_group.id }}">
+  <div class="panel panel-default">
+    <div class="panel-heading">
+      <div class="row">
+        <div class="col-xs-2">
+          <a href={{ url_for('solution_group', solution_group_id=solution_group.id, subtask_id=subtask.id, task_id=task.id, hw_id=homework.id) }}>
+            <h4>Solution group {{ solution_group.id }}</h4>
+          </a>
+        </div>
+        <div class="col-xs-2">
+          <button type="button" class="btn btn-info" data-toggle="collapse" data-target="#solutions-{{ solution_group.id }}">Show solutions</button>
+        </div>
+        <div class="col-xs-2">
+          <button type="button" class="btn btn-info" data-toggle="collapse" data-target="#remarks-{{ solution_group.id }}">Show remarks</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="panel-body">
+      <div class="collapse" id="solutions-{{ solution_group.id }}">
+        <h4>Solutions:</h4>
+        <ul class="list-group" id="solution_list-{{ solution_group.id }}">
+          {% for solution in solution_group.solutions %}
+            <li class="list-group-item" id="solution-{{ solution.id }}" draggable="true" ondragstart="drag_solution(event)">
+              <p>{{ solution.solution_text }}</p><hr>
+            </li>
+          {% endfor %}
+        </ul>
+        <br>
+      </div>
+      <div class="collapse" id="remarks-{{ solution_group.id }}">
+        <h4>Remarks:</h4>
+        <ul class="list-group" id="remark-list-{{ solution_group.id }}">
+          {% for remark in solution_group.remarks %}
+            <li class="list-group-item" id="remark-{{ remark.id }}">
+              <p>{{ remark.text }}</p>
+              <hr>
+            </li>
+          {% endfor %}
+        </ul>
+        <br>
+      </div>
+      Number of solutions: {{ solution_group.solutions.count() }} <br>
+      Remarks: {{ solution_group.remarks | length }} <br>
+      {% if solution_group.final_remark is none %}
+        <b>Unresolved</b>
+      {% else %}
+        Final score percentage: <b>{{ solution_group.final_remark.score_percentage }}</b>
+      {% endif %}
+    </div>
+  </div>
+</li>
