@@ -2,13 +2,13 @@ FROM python:3.7-alpine
 
 ENV PYTHONUNBUFFERED 1
 
-RUN mkdir /kosl /repos
+RUN mkdir /kosl /repos /root/.ssh
 
 COPY requirements.txt /kosl
 
 WORKDIR /kosl
 
-RUN apk add --no-cache --virtual .build-deps gcc musl-dev libffi-dev postgresql-dev \
+RUN apk add --no-cache --virtual .build-deps gcc musl-dev libffi-dev postgresql-dev git openssh-client \
 	&& pip install -r requirements.txt \
 	&& apk del libffi-dev postgresql-dev
 

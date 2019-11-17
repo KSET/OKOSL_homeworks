@@ -78,10 +78,12 @@ class Repository():
             
             repositories.append(solved_hw)
 
-            subprocess.run(['git', 'clone',
+            result = subprocess.run(['git', 'clone',
                 '--quiet',
                 repo['ssh_url'],
                 clone_location])
+            if result.returncode != 0:
+                exit(result.returncode)
 
         db.session.commit()
 
