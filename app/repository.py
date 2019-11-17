@@ -75,15 +75,15 @@ class Repository():
             else:
                 solved_hw = SolvedHomework(student = student, homework = homework, repo_path = clone_location)
                 db.session.add(solved_hw)
+                result = subprocess.run(['git', 'clone',
+                    '--quiet',
+                    repo['ssh_url'],
+                    clone_location])
+                if result.returncode != 0:
+                    exit(result.returncode)
             
             repositories.append(solved_hw)
 
-            result = subprocess.run(['git', 'clone',
-                '--quiet',
-                repo['ssh_url'],
-                clone_location])
-            if result.returncode != 0:
-                exit(result.returncode)
 
         db.session.commit()
 

@@ -14,4 +14,4 @@ RUN apk add --no-cache --virtual .build-deps gcc musl-dev libffi-dev postgresql-
 
 COPY . /kosl
 
-CMD ["gunicorn", "-b", "0.0.0.0:80", "app:app"]
+CMD ["gunicorn", "-b", "0.0.0.0:80", "-t", "100", "app:app"]
