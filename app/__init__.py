@@ -4,6 +4,7 @@ from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
 from flask_user import UserManager
 from flask_admin import Admin
+from flask_breadcrumbs import Breadcrumbs
 from .admin import SecureAdminView
 
 app = Flask(__name__)
@@ -11,6 +12,7 @@ app.config.from_object(Config)
 # disable fsqla's event system - unused, but it wastes resources if enabled
 # more info: https://stackoverflow.com/questions/33738467/how-do-i-know-if-i-can-disable-sqlalchemy-track-modifications
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+Breadcrumbs(app=app)
 db = SQLAlchemy(app)
 migrate = Migrate(app, db)
 

@@ -46,14 +46,17 @@
     </nav>
     {% endblock %}
 
-    <!-- {% block crumbs %}
-    <div class="navbar navbar-default">
-      {%- for crumb in breadcrumbs -%}
-        <a href="{{ crumb.url }}">{{ crumb.text }}</a>
-        {{ '/' if not loop.last }}
-      {%- endfor -%}
-    </div>
-    {% endblock %} -->
+    {% block crumbs %}
+      <!-- breadcrumbs object always has a flask_menu.MenuEntryMixin object, so the "if empty" check can be performed by checking if len > 1 -->
+      {% if breadcrumbs | length > 1 %}
+        <ul class="breadcrumb">
+          <!-- starting from index 1 because of the aforementioned flask_menu.MenuEntryMixin -->
+          {%- for crumb in breadcrumbs[1:] -%}
+            <li><a href="{{ crumb.url }}">{{ crumb.text }}</a></li>
+          {%- endfor -%}
+        </ul>
+      {%- endif %}
+    {% endblock %}
 
     <hr class="no-margins"/>
 

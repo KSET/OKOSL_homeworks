@@ -1,13 +1,11 @@
 from app import app, db
-from flask import render_template, jsonify, request  # , flash
+from flask import render_template, jsonify, request
 from flask_user import login_required, roles_required, current_user
-from .models import Homework, Task, Subtask, SolutionGroup, Solution, Remark  # , Solution, Remark
+from flask_breadcrumbs import register_breadcrumb
+from .models import Homework, Task, Subtask, SolutionGroup, Solution, Remark
 from .forms import RemarkForm, FinalRemarkForm
 from .repository import Repository
-# import datetime
-
-
-NUMBER_OF_ARTICLES = 3
+from . import breadcrumb_generators
 
 
 def render_solution_group(sg_id):
@@ -35,6 +33,8 @@ def homeworks():
 
 
 @app.route('/homeworks/<hw_id>')
+@register_breadcrumb(app, '.homework', '',
+                     dynamic_list_constructor=breadcrumb_generators.get_hw_crumb)
 @login_required
 def homework(hw_id):
     homework = Homework.query.get(hw_id)
@@ -42,6 +42,8 @@ def homework(hw_id):
 
 
 @app.route('/homeworks/<hw_id>/tasks/<task_id>')
+@register_breadcrumb(app, '.homework.task', '',
+                     dynamic_list_constructor=breadcrumb_generators.get_task_crumb)
 @login_required
 def task(task_id, hw_id):
     task = Task.query.get(task_id)
@@ -50,6 +52,8 @@ def task(task_id, hw_id):
 
 
 @app.route('/homeworks/<hw_id>/tasks/<task_id>/subtask_<subtask_id>')
+@register_breadcrumb(app, '.homework.task.subtask', '',
+                     dynamic_list_constructor=breadcrumb_generators.get_subtask_crumb)
 @login_required
 def subtask(subtask_id, task_id, hw_id):
     subtask = Subtask.query.get(subtask_id)
@@ -59,6 +63,8 @@ def subtask(subtask_id, task_id, hw_id):
 
 
 @app.route('/homeworks/<hw_id>/tasks/<task_id>/subtask_<subtask_id>/solution_group_<solution_group_id>', methods=['GET', 'POST'])
+@register_breadcrumb(app, '.homework.task.subtask.solution_group', '',
+                     dynamic_list_constructor=breadcrumb_generators.get_solution_group_crumb)
 @login_required
 def solution_group(solution_group_id, subtask_id, task_id, hw_id):
     solution_group = SolutionGroup.query.get(solution_group_id)
@@ -122,7 +128,7 @@ def pull_solutions(hw_id):
 @app.route('/ajax/<hw_id>/push_remarks')
 @login_required
 def push_remarks(hw_id):
-    homework = Homework.query.get(hw_id)
+    homework = Homework.query.get(hw_id)  # noqa
     try:
         # Repository.push_remarks(homework)
         pass
