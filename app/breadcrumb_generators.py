@@ -3,14 +3,12 @@ from flask import request, url_for
 
 
 def get_hw_crumb(*args, **kwargs):
-    print("HW CRUMB GEN")
     hw_id = request.view_args['hw_id']
     hw = Homework.query.get(hw_id)
     return [{'text': hw.get_slug(), 'url': url_for('homework', hw_id=hw_id)}]
 
 
 def get_task_crumb(*args, **kwargs):
-    print("TASK CRUMB GEN")
     task_id = request.view_args['task_id']
     task = Task.query.get(task_id)
     hw_id = task.homework.id
@@ -18,7 +16,6 @@ def get_task_crumb(*args, **kwargs):
 
 
 def get_subtask_crumb(*args, **kwargs):
-    print("SUBTASK CRUMB GEN")
     subtask_id = request.view_args['subtask_id']
     subtask = Subtask.query.get(subtask_id)
     task = subtask.task
@@ -30,7 +27,6 @@ def get_subtask_crumb(*args, **kwargs):
 
 
 def get_solution_group_crumb(*args, **kwargs):
-    print("SG CRUMB GEN")
     sg_id = request.view_args['solution_group_id']
     sg = SolutionGroup.query.get(sg_id)
     subtask = sg.subtask
