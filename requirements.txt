@@ -7,7 +7,6 @@ cffi==1.13.2
 chardet==3.0.4
 Click==7.0
 cryptography==2.8
-ERAlchemy==1.2.10
 Flask==1.1.1
 Flask-Admin==1.5.4
 Flask-Breadcrumbs==0.4.0
