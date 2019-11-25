@@ -11,6 +11,13 @@
   </div>
 </div>
 <hr>
+
+<div class="container-fluid">
+  <button class="btn btn-primary" type="button" data-toggle="collapse" data-target=".multi-collapse-solutions" aria-expanded="false" aria-controls="{{ create_multicollapse_list(subtask.id, solutions=True) | safe }}">Toggle solutions</button>
+
+  <button class="btn btn-primary" type="button" data-toggle="collapse" data-target=".multi-collapse-remarks" aria-expanded="false" aria-controls="{{ create_multicollapse_list(subtask.id, solutions=False) | safe }}">Toggle remarks</button>
+</div>
+
 <div class="container-fluid" ondragover="allow_drop(event)" ondrop="drop_solution(event)">
   <ul class="list-group" id="solution-groups-list">
   	{% for solution_group in subtask.solution_groups %}

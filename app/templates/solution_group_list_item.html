@@ -17,7 +17,7 @@
     </div>
 
     <div class="panel-body">
-      <div class="collapse" id="solutions-{{ solution_group.id }}">
+      <div class="collapse in multi-collapse-solutions" id="solutions-{{ solution_group.id }}">
         <h4>Solutions:</h4>
         <ul class="list-group" id="solution_list-{{ solution_group.id }}">
           {% for solution in solution_group.solutions %}
@@ -28,7 +28,7 @@
         </ul>
         <br>
       </div>
-      <div class="collapse" id="remarks-{{ solution_group.id }}">
+      <div class="collapse in multi-collapse-remarks" id="remarks-{{ solution_group.id }}">
         <h4>Remarks:</h4>
         <ul class="list-group" id="remark-list-{{ solution_group.id }}">
           {% for remark in solution_group.remarks %}

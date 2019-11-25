@@ -20,7 +20,17 @@ def render_solution_group(sg_id):
                            homework=homework)
 
 
+def create_multicollapse_list(subtask_id, solutions=True):
+    subtask = Subtask.query.get(subtask_id)
+    if solutions:
+        multicollapse_targets = ' '.join([f'solutions-{sg.id}' for sg in subtask.solution_groups])
+    else:
+        multicollapse_targets = ' '.join([f'remarks-{sg.id}' for sg in subtask.solution_groups])
+    return multicollapse_targets
+
+
 app.jinja_env.globals.update(render_solution_group=render_solution_group)
+app.jinja_env.globals.update(create_multicollapse_list=create_multicollapse_list)
 
 
 @app.route('/')
