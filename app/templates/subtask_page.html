@@ -20,7 +20,7 @@
 
 <div class="container-fluid" ondragover="allow_drop(event)" ondrop="drop_solution(event)">
   <ul class="list-group" id="solution-groups-list">
-  	{% for solution_group in subtask.solution_groups %}
+  	{% for solution_group in solution_groups %}
       {{ render_solution_group(solution_group.id)|safe }}
       <hr>
     {% endfor %}
