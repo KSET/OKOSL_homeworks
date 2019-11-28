@@ -69,7 +69,13 @@ def subtask(subtask_id, task_id, hw_id):
     subtask = Subtask.query.get(subtask_id)
     task = Task.query.get(task_id)
     homework = Homework.query.get(task.homework_id)
-    return render_template('subtask_page.html', subtask=subtask, task=task, homework=homework)
+    # sort SGs so that the unresolved SGs are at the top because they should take priority
+    solution_groups = subtask.solution_groups.order_by(SolutionGroup.final_remark_id.desc())
+    return render_template('subtask_page.html',
+                           subtask=subtask,
+                           task=task,
+                           homework=homework,
+                           solution_groups=solution_groups)
 
 
 @app.route('/homeworks/<hw_id>/tasks/<task_id>/subtask_<subtask_id>/solution_group_<solution_group_id>', methods=['GET', 'POST'])
