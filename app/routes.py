@@ -176,8 +176,8 @@ def move_solution():
 
     if target_sg.subtask.id != source_sg.subtask.id:
         messages['success'] = False
-        messages['error'] = """Target solution group not of the same subtask\
-                as the source solution group"""
+        messages['error'] = "Target solution group not of the same subtask" \
+                + "as the source solution group"
         return jsonify(messages)
 
     if source_sg.solutions.count() == 0:
