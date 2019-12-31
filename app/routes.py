@@ -174,6 +174,10 @@ def move_solution():
         messages['target_sg_id'] = target_sg.id
     solution.solution_group_id = target_sg.id
 
+    if target_sg.subtask.id != source_sg.subtask.id:
+        raise ValueError("""Target solution group not of the same subtask\
+                 as the source solution group""")
+
     if source_sg.solutions.count() == 0:
         for remark in source_sg.remarks:
             target_sg.remarks.append(Remark(text=remark.text,
