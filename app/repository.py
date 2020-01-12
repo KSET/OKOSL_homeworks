@@ -2,6 +2,7 @@ import requests
 import json
 import os
 import subprocess
+from app import report
 from config import Config
 from app import app, db
 from app.models import *
@@ -149,3 +150,12 @@ class Repository():
 
         # Discard any 'solutions' exceeding the number of subtasks
         return solutions[:subtasks_count]
+
+    def push_remarks(homework):
+        '''Checks that all solutions have final remark, generates reports and pushes them'''
+        if not report.verify_final_remarks(homework):
+            raise ValueError("Some solutions don't have a final remark!")
+
+        for solved_homework in db.session.query(SolvedHomework).filter(
+                SolvedHomework.homework == homework):
+            report.generate_report(solved_homework)
