@@ -156,7 +156,8 @@ class Repository():
         if not Repository.verify_final_remarks(homework):
             raise ValueError("""Some solutions don't have a final remark!""")
 
-        for solved_homework in db.session.query(SolvedHomework).filter(SolvedHomework.homework == homework):
+        for solved_homework in db.session.query(SolvedHomework).filter(
+                SolvedHomework.homework == homework):
             generate_report(solved_homework)
 
 
@@ -166,7 +167,8 @@ class Repository():
         # instead of iterating throught all SolvedHomeworks and their solutions it
         # iterates through all SG-s instead
 
-        for solved_homework in db.session.query(SolvedHomework).filter(SolvedHomework.homework == homework):
+        for solved_homework in db.session.query(SolvedHomework).filter(
+                SolvedHomework.homework == homework):
             for solution in solved_homework.solutions:
                 if not solution.solution_group.final_remark:
                     return False

@@ -18,7 +18,8 @@ def generate_report(solved_homework):
             report.write('Remark:\n')
             report.write(solution.solution_group.final_remark.text+'\n')
             report.write('Maximum points: '+str(solution.solution_group.subtask.max_points)+'\n')
-            points = solution.solution_group.subtask.max_points * solution.solution_group.final_remark.score_percentage
+            points = solution.solution_group.subtask.max_points *\
+                    solution.solution_group.final_remark.score_percentage
             report.write('Points scored: '+str(points)+'\n')
             points_scored += points
             report.write('\n')
@@ -31,9 +32,13 @@ def generate_report(solved_homework):
 
 
 def _push_report(solved_homework):
-    subprocess.run(['git', '-C', solved_homework.repo_path, 'add', 'report.txt'])
-    subprocess.run(['git', '-C', solved_homework.repo_path, 'checkout', '-b', 'report'])
-    subprocess.run(['git', '-C', solved_homework.repo_path, 'commit', '-m', 'Add report'])
-    subprocess.run(['git', '-C', solved_homework.repo_path, 'push', '--set-upstream', 'origin', 'report'])
+    subprocess.run(['git', '-C', solved_homework.repo_path,
+                    'add', 'report.txt'], check=True)
+    subprocess.run(['git', '-C', solved_homework.repo_path,
+                    'checkout', '-b', 'report'], check=True)
+    subprocess.run(['git', '-C', solved_homework.repo_path,
+                    'commit', '-m', 'Add report'], check=True)
+    subprocess.run(['git', '-C', solved_homework.repo_path,
+                    'push', '--set-upstream', 'origin', 'report'], check=True)
 
 # def generate summary(homework):
