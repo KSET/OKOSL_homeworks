@@ -25,7 +25,7 @@ def generate_report(solved_homework):
 
         report.write('\nTotal points scored: '+str(points_scored))
 
-#    _push_report(solved_homework)
+    _push_report(solved_homework)
 
     return points_scored
 
