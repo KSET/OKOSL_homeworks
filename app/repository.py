@@ -153,7 +153,7 @@ class Repository():
 
     def push_remarks(homework):
         '''Checks that all solutions have final remark, generates reports and pushes them'''
-        if not verify_final_remarks(homework):
+        if not Repository.verify_final_remarks(homework):
             raise ValueError("""Some solutions don't have a final remark!""")
 
         for solved_homework in db.session.query(SolvedHomework).filter(SolvedHomework.homework == homework):
