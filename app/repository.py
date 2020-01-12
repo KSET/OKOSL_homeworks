@@ -149,3 +149,20 @@ class Repository():
 
         # Discard any 'solutions' exceeding the number of subtasks
         return solutions[:subtasks_count]
+
+    def push_remarks(homework):
+        '''Checks that all solutions have final remark and pushes them'''
+
+
+    def verify_final_remarks(homework):
+        '''Checks that all solutions have a final remark'''
+        #TODO After fixing a bug that enables having empty SGs change this so that
+        # instead of iterating throught all SolvedHomeworks and their solutions it
+        # iterates through all SG-s instead
+
+        for solved_homework in db.session.query(SolvedHomework).filter(SolvedHomework.homework == homework):
+            for solution in solved_homework.solutions:
+                if not solution.solution_group.final_remark:
+                    return False
+
+        return True
