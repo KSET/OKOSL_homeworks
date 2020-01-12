@@ -2,7 +2,7 @@ import requests
 import json
 import os
 import subprocess
-from app.report import generate_report
+from app import report
 from config import Config
 from app import app, db
 from app.models import *
@@ -153,24 +153,9 @@ class Repository():
 
     def push_remarks(homework):
         '''Checks that all solutions have final remark, generates reports and pushes them'''
-        if not Repository.verify_final_remarks(homework):
-            raise ValueError("""Some solutions don't have a final remark!""")
+        if not report.verify_final_remarks(homework):
+            raise ValueError("Some solutions don't have a final remark!")
 
         for solved_homework in db.session.query(SolvedHomework).filter(
                 SolvedHomework.homework == homework):
-            generate_report(solved_homework)
-
-
-    def verify_final_remarks(homework):
-        '''Checks that all solutions have a final remark'''
-        #TODO After fixing a bug that enables having empty SGs change this so that
-        # instead of iterating throught all SolvedHomeworks and their solutions it
-        # iterates through all SG-s instead
-
-        for solved_homework in db.session.query(SolvedHomework).filter(
-                SolvedHomework.homework == homework):
-            for solution in solved_homework.solutions:
-                if not solution.solution_group.final_remark:
-                    return False
-
-        return True
+            report.generate_report(solved_homework)
