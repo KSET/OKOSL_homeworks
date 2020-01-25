@@ -33,7 +33,7 @@
 
 <hr>
 
-{% if solution_group.remarks | length > 2 %}
+{% if solution_group.remarks | length > 2 or current_user.has_role('Admin') %}
   <div class="container-fluid">
     {% if solution_group.final_remark is none %}
       <h3>Add final remark:</h3>
