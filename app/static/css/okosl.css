@@ -5,5 +5,12 @@ textarea { font-family: "Courier New", Courier, monospace; }
 .with-margins { margin: 10px; }
 .col-centered { float: none; margin: 0 auto; }
 
-.solution-text { font-family: "Courier New", Courier, monospace; }
-.remark-text { font-family: "Courier New", Courier, monospace; }
+.solution-text {
+	font-family: "Courier New", Courier, monospace;
+	white-space: pre-wrap;
+}
+
+.remark-text {
+	font-family: "Courier New", Courier, monospace;
+	white-space: pre-wrap;
+}
