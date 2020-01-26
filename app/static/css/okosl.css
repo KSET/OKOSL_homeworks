@@ -14,3 +14,20 @@ textarea { font-family: "Courier New", Courier, monospace; }
 	font-family: "Courier New", Courier, monospace;
 	white-space: pre-wrap;
 }
+
+.panel-heading {
+	padding-top: 0px;
+	padding-bottom: 0px;
+}
+
+.panel-body {
+	padding-top: 0px;
+	padding-bottom: 0px;
+	padding-left: 5px;
+	padding-right: 5px;
+}
+
+.list-group-item {
+	padding-top: 0px;
+	padding-bottom: 0px;
+}

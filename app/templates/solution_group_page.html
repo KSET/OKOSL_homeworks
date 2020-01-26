@@ -11,7 +11,7 @@
     <div class="container-fluid">
       <h2>Final remark</h2>
       <span class="remark-text">{{ solution_group.final_remark.text }}</span><br>
-      Score percentage: {{ solution_group.final_remark.score_percentage }} <br>
+      Score percentage: {{ solution_group.final_remark.score_percentage }}<br>
       Author: {{ solution_group.final_remark.author.username }}
     </div>
   {% endif %}
@@ -25,7 +25,6 @@
   	{% for solution in solution_group.solutions %}
       <li class="list-group-item">
         <span class="solution-text">{{ solution.solution_text }}</span>
-        <hr>
       </li>
     {% endfor %}
   </ul>
@@ -33,19 +32,6 @@
 
 <hr>
 
-<div class="container-fluid">
-  <h3>Remarks:</h3>
-  <ul class="list-group">
-    {% for remark in solution_group.remarks %}
-      <li class="list-group-item">
-        <span class="remark-text">{{ remark.text }}</span><br>
-        Score percentage: {{ remark.score_percentage }} <br>
-        Author: {{ remark.author.username }}
-      </li>
-      <hr>
-    {% endfor %}
-  </ul>
-</div>
 
 {% if solution_group.remarks | length > 2 or current_user.has_role('Admin') %}
   <div class="container-fluid">
@@ -98,5 +84,18 @@
   </form>
 </div>
 
+<div class="container-fluid">
+  <h3>Remarks:</h3>
+  <ul class="list-group">
+    {% for remark in solution_group.remarks %}
+      <li class="list-group-item">
+        <span class="remark-text">{{ remark.text }}</span><br>
+        Score percentage: {{ remark.score_percentage }}<br>
+        Author: {{ remark.author.username }}
+      </li>
+      <hr>
+    {% endfor %}
+  </ul>
+</div>
 
 {% endblock %}
