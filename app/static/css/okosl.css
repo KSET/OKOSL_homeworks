@@ -1,0 +1,9 @@
+hr { border-color: #cccccc; margin: 0; }
+textarea { font-family: "Courier New", Courier, monospace; }
+
+.no-margins { margin: 0px; }
+.with-margins { margin: 10px; }
+.col-centered { float: none; margin: 0 auto; }
+
+.solution-text { font-family: "Courier New", Courier, monospace; }
+.remark-text { font-family: "Courier New", Courier, monospace; }
