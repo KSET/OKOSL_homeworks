@@ -21,7 +21,7 @@
         <h4>Solutions:</h4>
         <ul class="list-group" id="solution_list-{{ solution_group.id }}">
           {% for solution in solution_group.solutions %}
-            <li class="list-group-item" id="solution-{{ solution.id }}">
+            <li class="list-group-item" id="solution-{{ solution.id }}" draggable="true" ondragstart="drag_solution(event)">
               <p class="solution-text">{{ solution.solution_text }}</p><hr>
             </li>
           {% endfor %}
