@@ -21,7 +21,7 @@ def generate_report(solved_homework):
 
             report.write('Remark:   \n')
             remark = solution.solution_group.final_remark.text
-            report.write('> '+'\n'.join([s+'  ' for s in remark.split('\n')])+'\n')
+            report.write('> '+'\n'.join([s+'  ' for s in remark.split('\r\n')])+'\n')
 
             points = solution.solution_group.subtask.max_points *\
                     solution.solution_group.final_remark.score_percentage
@@ -32,14 +32,14 @@ def generate_report(solved_homework):
 
         report.write('\n**Total points scored: '+str(points_scored)+'**  ')
 
-    _push_report(solved_homework)
+    #_push_report(solved_homework)
 
     return points_scored
 
 
 def _push_report(solved_homework):
     subprocess.run(['git', '-C', solved_homework.repo_path,
-                    'add', 'report.txt'], check=True)
+                    'add', 'report.md'], check=True)
     subprocess.run(['git', '-C', solved_homework.repo_path,
                     'checkout', '-b', 'report'], check=True)
     subprocess.run(['git', '-C', solved_homework.repo_path,
