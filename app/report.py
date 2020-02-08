@@ -21,7 +21,7 @@ def generate_report(solved_homework):
 
             report.write('Remark:   \n')
             remark = solution.solution_group.final_remark.text
-            report.write('> '+'\n'.join([s+'  ' for s in remark.split('\r\n')])+'\n')
+            report.write('> '+'\n'.join([s+'  ' for s in remark.split('\r\n')])+'\n\n')
 
             points = solution.solution_group.subtask.max_points *\
                     solution.solution_group.final_remark.score_percentage
