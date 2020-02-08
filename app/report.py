@@ -10,23 +10,26 @@ def generate_report(solved_homework):
 
     points_scored = 0.
 
-    with open(solved_homework.repo_path+'/report.txt', 'w') as report:
-        report.write(solved_homework.homework.get_slug()+' Report\n\n\n')
+    with open(solved_homework.repo_path+'/report.md', 'w') as report:
+        report.write('# '+solved_homework.homework.get_slug()+' Report  \n')
 
         for i, solution in enumerate(solved_homework.solutions):
-            report.write('Subtask '+str(i+1)+'\n')
-            report.write('Solution:\n')
-            report.write(solution.solution_text)
-            report.write('Remark:\n')
-            report.write(solution.solution_group.final_remark.text+'\n')
-            report.write('Maximum points: '+str(solution.solution_group.subtask.max_points)+'\n')
+            report.write('## Subtask '+str(i+1)+'  \n')
+
+            report.write('> '+'\n'.join([s+'  ' for s in solution.split('\n')])+'\n')
+
+            report.write('Remark:   \n')
+            remark = solution.solution_group.final_remark.text
+            report.write('> '+'\n'.join([s+'  ' for s in remark.split('\n')])+'\n')
+
             points = solution.solution_group.subtask.max_points *\
                     solution.solution_group.final_remark.score_percentage
-            report.write('Points scored: '+str(points)+'\n')
+            max_points = solution.solution_group.subtask.max_points
+            report.write('Points: '+str(points)+'/'+str(max_points)+'  \n')
             points_scored += points
             report.write('\n')
 
-        report.write('\nTotal points scored: '+str(points_scored))
+        report.write('\n**Total points scored: '+str(points_scored)+'**  ')
 
     _push_report(solved_homework)
 
