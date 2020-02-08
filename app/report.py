@@ -16,7 +16,8 @@ def generate_report(solved_homework):
         for i, solution in enumerate(solved_homework.solutions):
             report.write('## Subtask '+str(i+1)+'  \n')
 
-            report.write('> '+'\n'.join([s+'  ' for s in solution.split('\n')])+'\n')
+            solution_text = solutoin.solution_text
+            report.write('> '+'\n'.join([s+'  ' for s in solution_text.split('\n')])+'\n')
 
             report.write('Remark:   \n')
             remark = solution.solution_group.final_remark.text
