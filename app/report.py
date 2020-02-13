@@ -102,8 +102,8 @@ def _plagiarism_check(solved_homework_1, solved_homework_2):
 
     counter = 0
     for sol_1, sol_2 in zip(solved_homework_1.solutions, solved_homework_2.solutions):
-        if (sol_1.solution_text == ''
-                and sol_2.solution_text == ''
+        if (sol_1.solution_text != ''
+                and sol_2.solution_text != ''
                 and sol_1.solution_group == sol_2.solution_group):
             counter += 1
 
