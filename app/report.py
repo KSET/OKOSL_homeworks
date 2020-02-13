@@ -81,6 +81,18 @@ def _get_points(solved_homework):
     return points
 
 def plagiarism_summary(homework):
+    """Returns a sorted list of JMBAG student pairs and a number of shared SGs"""
+    results = plagiarism_results(homework)
+    results.sort(key=lambda x: x[1], reverse=True)
+
+    summary = []
+    for (sh_1, sh_2), count in results:
+        summary.append(((sh_1.student.jmbag, sh_2.student.jmbag), count))
+
+    return summary
+
+
+def plagiarism_results(homework):
     '''Returns number of shared SGs for each student pair'''
 
 
