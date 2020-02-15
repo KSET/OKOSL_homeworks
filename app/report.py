@@ -79,3 +79,43 @@ def _get_points(solved_homework):
                 s.solution_group.subtask.max_points
 
     return points
+
+def plagiarism_summary(homework, treshold=0):
+    """Prints a sorted list of JMBAG student pairs and a number of shared SGs above the threshold"""
+    results = plagiarism_results(homework)
+    results.sort(key=lambda x: x[1], reverse=True)
+
+    for (sh_1, sh_2), count in results:
+        if count >= treshold:
+            print(f'{sh_1.student.jmbag} - {sh_2.student.jmbag} => {count}')
+
+
+def plagiarism_results(homework):
+    '''Returns number of shared SGs for each student pair'''
+
+
+    solved_homeworks = list(SolvedHomework.query.filter(SolvedHomework.homework == homework))
+
+    results = []
+    for index, sh_1 in enumerate(solved_homeworks):
+        for sh_2 in solved_homeworks[index+1:]:
+            results.append(((sh_1, sh_2), _plagiarism_check(sh_1, sh_2)))
+    
+    return results
+
+
+def _plagiarism_check(solved_homework_1, solved_homework_2):
+    """Return a number of shared SGs for two given Solved Homeworks 
+
+    Doesn't count SG as shared if either student has an empty solution
+    """
+
+    counter = 0
+    for sol_1, sol_2 in zip(solved_homework_1.solutions, solved_homework_2.solutions):
+        if (sol_1.solution_text != ''
+                and sol_2.solution_text != ''
+                and sol_1.solution_group == sol_2.solution_group):
+            counter += 1
+
+    return counter
+
