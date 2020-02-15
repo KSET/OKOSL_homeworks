@@ -85,13 +85,9 @@ def plagiarism_summary(homework, treshold=0):
     results = plagiarism_results(homework)
     results.sort(key=lambda x: x[1], reverse=True)
 
-    summary = []
     for (sh_1, sh_2), count in results:
         if count >= treshold:
             print(f'{sh_1.student.jmbag} - {sh_2.student.jmbag} => {count}')
-            summary.append(((sh_1.student.jmbag, sh_2.student.jmbag), count))
-
-    return summary
 
 
 def plagiarism_results(homework):
