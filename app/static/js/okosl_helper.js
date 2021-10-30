@@ -83,3 +83,7 @@ function push_remarks(button) {
   }
   xhr.send()
 }
+
+$('body').on('click', '.list-group-item-fix-toggle', function() {
+  $(this).closest('.list-group-item').toggleClass('list-item-fixed').siblings().removeClass('list-item-fixed');
+});
