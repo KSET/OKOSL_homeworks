@@ -36,7 +36,8 @@ class Repository():
             response = requests.get(
                 Config.GITEA_API_URL+'/repos/search',
                 headers = Config.GITEA_API_HEADERS,
-                params = {'q': name, 'limit':Config.GITEA_API_PAGE_SIZE, 'page':page})
+                params = {'q': name, 'limit':Config.GITEA_API_PAGE_SIZE, 'page':page},
+                verify = Config.GITEA_VERIFY_SSL)
             json_response = json.loads(response.text)['data']
             page += 1
             response_len = len(json_response)
