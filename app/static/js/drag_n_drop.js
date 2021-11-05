@@ -94,3 +94,7 @@ function drop_solution(ev) {
 	move_solution(source_sg_id, target_sg_id, solution_li)
 	target_sg_ul.appendChild(solution_li);
 }
+
+$('body').on('click', '.list-group-item-fix-toggle', function() {
+  $(this).closest('.list-group-item').toggleClass('list-item-fixed').siblings().removeClass('list-item-fixed');
+});
