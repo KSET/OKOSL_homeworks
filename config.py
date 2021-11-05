@@ -35,6 +35,7 @@ class Config(object):
     GITEA_TOKEN = os.environ.get("GITEA_TOKEN")
     GITEA_API_HEADERS = {'Authorization': 'token '+GITEA_TOKEN}
     GITEA_API_PAGE_SIZE = int(os.environ.get("GITEA_API_PAGE_SIZE", 50))
+    GITEA_VERIFY_SSL = os.environ.get("GITEA_VERIFY_SSL", 'False').lower() in ('true', '1', 't')
     REPOS_ROOT = os.environ.get("REPOS_ROOT")
 
     # Flask-User settings - see https://flask-user.readthedocs.io/en/v0.6/customization.html
