@@ -40,3 +40,8 @@ textarea { font-family: "Courier New", Courier, monospace; }
 	padding: 20px 20px 0;
 	z-index: 1;
 }
+
+.list-item-fixed .list-group {
+	overflow-x: scroll;
+	max-height: 150px;
+}
